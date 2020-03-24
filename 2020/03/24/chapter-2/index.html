@@ -11,7 +11,7 @@
 
     <title>
         
-        
+        手撕Docker系列-第二章 - undefined
         
     </title>
 
@@ -59,7 +59,7 @@
                     <span>HOME</span>
                 </a>
             </li>
-            <li class="active">
+            <li>
                 <a href="/tags">
                     <i class="iconfont icon-biaoqian1"></i>
                     <span>TAGS</span>
@@ -88,6 +88,10 @@
         </ul>
     </div>
     
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#手撕Docker系列-第二章"><span class="toc-text">手撕Docker系列-第二章</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Namespce"><span class="toc-text">Namespce</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#UTS-Namespace"><span class="toc-text">UTS Namespace</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IPC-Namespace"><span class="toc-text">IPC Namespace</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PID-Namespace"><span class="toc-text">PID Namespace</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Mount-Namespace"><span class="toc-text">Mount Namespace</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Cgroup"><span class="toc-text">Cgroup</span></a></li></ol>
+</div>
+    
 </div>
 
 
@@ -113,75 +117,45 @@
         
 
 
-<!-- 归档列表 -->
+<div class="post-container">
+    <div class="post-title">
+        手撕Docker系列-第二章
+    </div>
 
-<div class="archives-container">
-
-<div class="one-tag-list">
-                <span class="fa fa-calendar-times-o listing-seperator" id="2020">
-                    <span class="tag-text">2020</span>
-                </span>
-    <ul>
+    <div class="post-meta">
+        <span class="attr">Post：<span>2020-03-24 00:00:00</span></span>
         
-        <!-- <li class="listing-item">
-        <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-        <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-        </li> -->
-        <li>
-            <span>03-24</span>
-            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-            <a href="/2020/03/24/chapter-2/">
-                        <span>
-                            手撕Docker系列-第二章
-                        </span>
-            </a>
-            <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-        </li>
+        <span class="attr">Tags：/
         
-
-    </ul>
-</div>
-
-<div class="one-tag-list">
-                <span class="fa fa-calendar-times-o listing-seperator" id="2019">
-                    <span class="tag-text">2019</span>
-                </span>
-    <ul>
+        <a class="tag" href="/tags/#Docker" title="Docker">Docker</a>
+        <span>/</span>
         
-        <!-- <li class="listing-item">
-        <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-        <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-        </li> -->
-        <li>
-            <span>04-30</span>
-            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-            <a href="/2019/04/30/MIT 6.828-Lab1/">
-                        <span>
-                            MIT 6.828--Lab1
-                        </span>
-            </a>
-            <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-        </li>
         
-        <!-- <li class="listing-item">
-        <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-        <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-        </li> -->
-        <li>
-            <span>04-30</span>
-            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-            <a href="/2019/04/30/hello-world/">
-                        <span>
-                            Hello World
-                        </span>
-            </a>
-            <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-        </li>
+        </span>
+        <span class="attr">Visit：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content no-indent">
+        <h1 id="手撕Docker系列-第二章"><a href="#手撕Docker系列-第二章" class="headerlink" title="手撕Docker系列-第二章"></a>手撕Docker系列-第二章</h1><p>终于开始写博客啦，希望能够通过这个过程让自己能够沉淀下来，更好地深入技术吧。因为最近入职于一家SAAS公司，平时工作里不可避免的要碰到k8s和docker，趁此机会也好好熟悉这两门技术。主要的学习手段是通过陈显鹭前辈的这本《自己动手写Docker》开始，一方面是实现一个东西可以让人对它了解更深刻，另一方面是熟悉go语言的使用，毕竟是工作语言…借此机会系统地学一下。</p>
+<p>这一章主要分为两个部分，一个是namespace，一个是Cgroup，作为docker虚拟化概念中的核心技术。</p>
+<h1 id="Namespce"><a href="#Namespce" class="headerlink" title="Namespce"></a>Namespce</h1><p>Namespace是Linux的Kernel的一个功能，通过这个手段，Linux可以将其，我们在这里称之为各种资源隔离开来，其中包括进程，包括UserID，还有Network等。这也是docker镜像之间能够相互不干扰的原理锁在。</p>
+<p>Namespace根据资源类型，我们可以将其分为好几种，具体的代码可以见我的github，也可以直接参考《自己动手写Docker》。在Linux中一共实现了6种不同类型的Namespace</p>
+<h2 id="UTS-Namespace"><a href="#UTS-Namespace" class="headerlink" title="UTS Namespace"></a>UTS Namespace</h2><p>UTS Namespace用于隔离nodename和domainname，前者就是所谓的主机名，后者就是域名。在创建新的UTS namespace之后内部hostname独立于外部。</p>
+<h2 id="IPC-Namespace"><a href="#IPC-Namespace" class="headerlink" title="IPC Namespace"></a>IPC Namespace</h2><p>IPC Namespace用于隔离System V IPC和POSIX message queues，前者就是Unix早期进程间通信的所有集合，包括管道（同时包括有名管道）、信号、消息队列、共享内存、信号量。后者是提供了实现POSIX标准的消息队列。</p>
+<h2 id="PID-Namespace"><a href="#PID-Namespace" class="headerlink" title="PID Namespace"></a>PID Namespace</h2><p>PID Namespace是用来隔离进程ID的。要注意这里是进程ID不是进程.同一个进程在不同PID Namespace可以拥有不同的PID。</p>
+<h2 id="Mount-Namespace"><a href="#Mount-Namespace" class="headerlink" title="Mount Namespace"></a>Mount Namespace</h2><p>Mount Namespace用来隔离各个进程看到的挂载点视图。首先比较难理解的是挂载，在这里，我将其解释为将文件系统和目录树结合在一起的</p>
+<h1 id="Cgroup"><a href="#Cgroup" class="headerlink" title="Cgroup"></a>Cgroup</h1>
         
+        <br>
+        <div id="comment-container">
+        </div>
+        <div id="disqus_thread"></div>
 
-    </ul>
-</div>
+        <div id="lv-container">
+        </div>
 
+    </div>
 </div>
 
     </div>
@@ -270,12 +244,31 @@
     // We expose some of the variables needed by the front end
     window.hexo_search_path = "search.json"
     window.hexo_root = "/"
-    window.isPost = false
+    window.isPost = true
 </script>
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
 <script src="/js/index.js"></script>
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
+
+    <script>
+        /**
+         *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+         *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+        */
+        if( '' || '')
+        var disqus_config = function () {
+            this.page.url = '';  // Replace PAGE_URL with your page's canonical URL variable
+            this.page.identifier = ''; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+
+        (function() { // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+            s.src = 'https://swimmingfish-blog.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
 
 
 
