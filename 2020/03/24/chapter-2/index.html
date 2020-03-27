@@ -89,7 +89,7 @@
     </div>
     
         <div id="toc" class="toc-article">
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#手撕Docker系列-第二章"><span class="toc-text">手撕Docker系列-第二章</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Namespce"><span class="toc-text">Namespce</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#UTS-Namespace"><span class="toc-text">UTS Namespace</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IPC-Namespace"><span class="toc-text">IPC Namespace</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PID-Namespace"><span class="toc-text">PID Namespace</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Mount-Namespace"><span class="toc-text">Mount Namespace</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#User-Namespace"><span class="toc-text">User Namespace</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Network-Namespace"><span class="toc-text">Network Namespace</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Cgroup"><span class="toc-text">Cgroup</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#手撕Docker系列-第二章"><span class="toc-text">手撕Docker系列-第二章</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Namespce"><span class="toc-text">Namespce</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#UTS-Namespace"><span class="toc-text">UTS Namespace</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IPC-Namespace"><span class="toc-text">IPC Namespace</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PID-Namespace"><span class="toc-text">PID Namespace</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Mount-Namespace"><span class="toc-text">Mount Namespace</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#User-Namespace"><span class="toc-text">User Namespace</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Network-Namespace"><span class="toc-text">Network Namespace</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Cgroup"><span class="toc-text">Cgroup</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Hierarchy"><span class="toc-text">Hierarchy</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Subsystem"><span class="toc-text">Subsystem</span></a></li></ol></li></ol>
 </div>
     
 </div>
@@ -147,7 +147,21 @@
 <h2 id="Mount-Namespace"><a href="#Mount-Namespace" class="headerlink" title="Mount Namespace"></a>Mount Namespace</h2><p>Mount Namespace用来隔离各个进程看到的挂载点视图。首先比较难理解的是挂载，在这里，我将其解释为将文件系统和目录树结合在一起的一种结构，相当于将一个磁盘挂载至一个挂载点后，你就可以通过文件目录访问磁盘，并且文件系统也提供了inode、block等信息，更多的是一个关于怎么管理这片磁盘区域的配置信息。</p>
 <h2 id="User-Namespace"><a href="#User-Namespace" class="headerlink" title="User Namespace"></a>User Namespace</h2><p>User Namespace相对来说就好理解很多。众所周知，在Linux里面每个User有自己的UID和GroupID，后者规定了用户所在的用户组（权限控制相关）。因此User Namespace就是来划分这个UID和GroupID的。在不同的User Namespace中，不同的用户可以有不同的UID和GroupID，而且在不同User Namespace中的ID也是没有关联的，比如UID=1在两个User Namespace中就是完全相互独立的。</p>
 <h2 id="Network-Namespace"><a href="#Network-Namespace" class="headerlink" title="Network Namespace"></a>Network Namespace</h2><p>这个书里讲得很清楚。Network Namespace就是用来隔离网络设备，IP端口等网络栈的命名空间。每个Network Namespace中可以拥有独立的虚拟网络设备和自己的端口，且与其他的Network Namespace不冲突。</p>
-<h1 id="Cgroup"><a href="#Cgroup" class="headerlink" title="Cgroup"></a>Cgroup</h1><p>未完待续….这礼拜有空接着写</p>
+<h1 id="Cgroup"><a href="#Cgroup" class="headerlink" title="Cgroup"></a>Cgroup</h1><p>Linux Cgroup，全程Control Group。它的出现为的是解决一个什么问题呢？之前的Namespace，针对的只是Namespace之间的隔离。而我们如果要求能够对资源进行限制呢？现有的Namespace是无法做到这点的。于是Linux中就引入了Cgroup这个概念。Cgroup针对的是进程，相当于是一个进程分组框架。在Cgroup中主要有两个概念：hierarchy和subsystem。</p>
+<h2 id="Hierarchy"><a href="#Hierarchy" class="headerlink" title="Hierarchy"></a>Hierarchy</h2><p>Hierachy表达的是一个层次结构，Hierachy是一个树状结构，而在一个Hierachy下，可以绑定多个子Hierachy。这样就实现的进程的层级控制，所以一棵树更多的是相当于将进程进行分组。</p>
+<h2 id="Subsystem"><a href="#Subsystem" class="headerlink" title="Subsystem"></a>Subsystem</h2><p>首先声明一个约束，一个subsystem只能挂载到一个Cgroup Hierachy节点上。而这个subsystem可以根据约束的资源，分为9种类型：</p>
+<ul>
+<li>cpu subsystem （CPU使用率）</li>
+<li>cpuacct subsystem（进程的CPU使用报告）</li>
+<li>cpuset subsystem（为进程分配单独的CPU节点或者内存节点）</li>
+<li>memory subsystem（内存分配）</li>
+<li>blkio subsystem（设备io资源分配）</li>
+<li>devices subsystem（设备访问控制）</li>
+<li>net_cls subsystem（标记Cgroup下的进程数据包，使用tc模块（traffic control）进行数据包控制）</li>
+<li>freezer subsystem （挂起恢复进程）</li>
+<li>ns subsystem （使得不同cgroup下面的进程使用不同的namespace）</li>
+</ul>
+<p>（net_cls和freezer还不是很懂）</p>
 
         
         <br>
