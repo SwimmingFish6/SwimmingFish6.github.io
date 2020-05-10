@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        手撕Docker系列-第三章 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i> A Future System Architect </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>Xuhui Lu</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>HOME</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>TAGS</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>ARCHIVES</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>ABOUT</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>SEARCH</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#手撕Docker系列-第三章"><span class="toc-text">手撕Docker系列-第三章</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Linux-proc文件系统"><span class="toc-text">Linux proc文件系统</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Run命令启动"><span class="toc-text">Run命令启动</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#run"><span class="toc-text">run</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#init"><span class="toc-text">init</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#增加容器资源限制"><span class="toc-text">增加容器资源限制</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#增加管道和环境变量识别"><span class="toc-text">增加管道和环境变量识别</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-text">总结</span></a></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">search</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i> A Future System Architect </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        手撕Docker系列-第三章
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">Post：<span>2020-04-25 22:41:01</span></span>
+        
+        <span class="attr">Tags：/
+        
+        <a class="tag" href="/tags/#Docker" title="Docker">Docker</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">Visit：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content no-indent">
+        <h1 id="手撕Docker系列-第三章"><a href="#手撕Docker系列-第三章" class="headerlink" title="手撕Docker系列-第三章"></a>手撕Docker系列-第三章</h1><h1 id="Linux-proc文件系统"><a href="#Linux-proc文件系统" class="headerlink" title="Linux proc文件系统"></a>Linux proc文件系统</h1><p>Linux的/proc目录其实不是一个真正的文件系统，因为真正的文件系统通过一系列的metadata对磁盘上的文件进行管理。而/proc下的内容包含了系统runtime的metadata，包括系统内存，mount设备以及一些硬件配置。它只存在于内存中，而不占用外存空间。事实上，它只是提供了一个接口让用户以访问文件的形式访问这些信息。</p>
+<table>
+<thead>
+<tr>
+<th>目录</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>/proc/N</td>
+<td>PID为N的进程信息</td>
+</tr>
+<tr>
+<td>/proc/N/cmdline</td>
+<td>进程启动命令</td>
+</tr>
+<tr>
+<td>/proc/N/cwd</td>
+<td>链接到进程当前工作目录</td>
+</tr>
+<tr>
+<td>/proc/N/environ</td>
+<td>进程环境变量列表</td>
+</tr>
+<tr>
+<td>/proc/N/exe</td>
+<td>链接到进程的执行命令文件</td>
+</tr>
+<tr>
+<td>/proc/N/fd</td>
+<td>包含进程相关的所有文件描述符</td>
+</tr>
+<tr>
+<td>/proc/N/maps</td>
+<td>与进程相关的内存映射信息</td>
+</tr>
+<tr>
+<td>/proc/N/mem</td>
+<td>指代进程持有的内存(不可读)</td>
+</tr>
+<tr>
+<td>/proc/N/root</td>
+<td>连接到进程的根目录</td>
+</tr>
+<tr>
+<td>/proc/N/stat</td>
+<td>进程状态</td>
+</tr>
+<tr>
+<td>/proc/N/statm</td>
+<td>进程使用的进程状态</td>
+</tr>
+<tr>
+<td>/proc/N/status</td>
+<td>进程状态信息，比stat/statm更具可读性</td>
+</tr>
+<tr>
+<td>/proc/self/</td>
+<td>链接到当前正在运行的进程</td>
+</tr>
+</tbody>
+</table>
+<h1 id="Run命令启动"><a href="#Run命令启动" class="headerlink" title="Run命令启动"></a>Run命令启动</h1><p>mydocker<br><br>├─README.md<br><br>├─main.go<br><br>├─main_command.go<br><br>├─run.go<br><br>├─network<br><br>&nbsp;|&emsp;└test_linux.go<br><br>├─container<br><br>&nbsp;|&emsp;├─container_process.go<br><br>&nbsp;|&emsp;└init.go<br><br>├─Godeps<br><br>&nbsp;|&emsp;├─Godeps.json<br><br>&nbsp;|&emsp;└Readme<br></p>
+<p>文件目录如上所示。在这里我们不贴出过多的细节，主要把容器的启动过程分为几个部分。</p>
+<h2 id="run"><a href="#run" class="headerlink" title="run"></a>run</h2><p>run的过程里，最主要的定义了一些运行的flag（tty）。<code>Run(tty, cmd)</code>是关键的部分，这部分代码有必要贴出来。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">func Run(tty bool, command string) &#123;</span><br><span class="line">	parent := container.NewParentProcess(tty, command)</span><br><span class="line">	if err := parent.Start(); err != nil &#123;</span><br><span class="line">		log.Error(err)</span><br><span class="line">	&#125;</span><br><span class="line">	parent.Wait()</span><br><span class="line">	os.Exit(-1)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func NewParentProcess(tty bool, command string) *exec.Cmd &#123;</span><br><span class="line">	args := []string&#123;&quot;init&quot;, command&#125;</span><br><span class="line">	cmd := exec.Command(&quot;/proc/self/exe&quot;, args...)</span><br><span class="line">    cmd.SysProcAttr = &amp;syscall.SysProcAttr&#123;</span><br><span class="line">        Cloneflags: syscall.CLONE_NEWUTS | syscall.CLONE_NEWPID | syscall.CLONE_NEWNS |</span><br><span class="line">		syscall.CLONE_NEWNET | syscall.CLONE_NEWIPC,</span><br><span class="line">    &#125;</span><br><span class="line">	if tty &#123;</span><br><span class="line">		cmd.Stdin = os.Stdin</span><br><span class="line">		cmd.Stdout = os.Stdout</span><br><span class="line">		cmd.Stderr = os.Stderr</span><br><span class="line">	&#125;</span><br><span class="line">	return cmd</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在<code>container.NewParentProcess(tty, command)</code>中，mydocker启动了一个进程<code>/proc/self/exe</code>，这个在我们之前的段落已经有提及，就是设置了一个进程变量，进程的可执行文件为当前进程的可执行文件。还有一些第二章提到的Namespace来进行资源隔离。包括UTS（hostname），PID（进程号），NS（挂载点），NET（网络资源）和IPC（进程交互通道）。在之后又设置了一些输入输出的通道。可能看到它调用自己会有点疑惑，其实更清楚的思路是，在创建这个进程的时候也传入了一个参数<code>init</code>，相当于调用./mydocker init。我们再看看init干了什么。</p>
+<h2 id="init"><a href="#init" class="headerlink" title="init"></a>init</h2><p>在init的过程中，主要是init了container的process，最关键的一个函数叫做<code>container.RunContainerinitProcess(cmd, nil)</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">func RunContainerInitProcess(command string, args []string) error &#123;</span><br><span class="line">	logrus.Infof(&quot;command %s&quot;, command)</span><br><span class="line"></span><br><span class="line">	defaultMountFlags := syscall.MS_NOEXEC | syscall.MS_NOSUID | syscall.MS_NODEV</span><br><span class="line">	syscall.Mount(&quot;proc&quot;, &quot;/proc&quot;, &quot;proc&quot;, uintptr(defaultMountFlags), &quot;&quot;)</span><br><span class="line">	argv := []string&#123;command&#125;</span><br><span class="line">	if err := syscall.Exec(command, argv, os.Environ()); err != nil &#123;</span><br><span class="line">		logrus.Errorf(err.Error())</span><br><span class="line">	&#125;</span><br><span class="line">	return nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在这个函数里创建的进程本质上没有干什么事情。而函数本身首先规定了一个挂载参数，然后挂载到/proc上。之后再通过exec启动。</p>
+<p>MountFlags的意义如下</p>
+<ul>
+<li>MS_NOEXEC： 这个文件系统中不允许运行其它程序。</li>
+<li>MS_NOSUID: 这个文件系统下不允许设置user_id或者group id。</li>
+<li>MS_NODEV: Linux2.0默认设置参数。</li>
+</ul>
+<p>exec这句语句也很关键，看起来它只是简单执行了一个程序。但是其实背后有比较复杂的逻辑。首先，当我们运行完run命令之后，我们希望暴露给我们的前台进程是容器进程，然后目前为止PID为1的前台进程仍然是init进程，而syscall.Exec这个方法， 其实最终调用了Kernel的intexecve(const char filename,char <em>const argv[], char </em>const envp[]);这个系统函数会执行对应文件，并覆盖当前进程的镜像，堆栈和数据，包括PID。</p>
+<p>在之后，我们容器已经启动了，我们可以通过<code>ps -ef</code>去查看目前的进程号是否为1。</p>
+<h1 id="增加容器资源限制"><a href="#增加容器资源限制" class="headerlink" title="增加容器资源限制"></a>增加容器资源限制</h1><p>在这个部分，我们希望能够让mydocker实现资源限制。e.g. <code>mydocker run -ti -m IOOm -cpuset I -cpushare 512 /bin/sh</code>。其实在经历过第二章原理以后，这部分的实现相当容易。首先，假设我们在这里只考虑memory的限制，我们要做的就是创建一个memory subsystem。在这个memory subsystem中，我们将限制的变量写入memory挂载点下面指定的Cgroup。具体的subsystem的挂载点可以通过/proc/self/mountinfo来进行查看，值得注意的是，mountinfo里面得到的并不是文件系统下的绝对路径，我们仍然需要通过拼接等得到绝对路径。之后将限制参数写入Cgroup下的文件里。最后我们通过将进程加入挂载点下的指定Cgroup中来限制进程资源的使用。具体的代码实现可以看书中的实现</p>
+<p><img src="https://docs.google.com/drawings/d/e/2PACX-1vR4tG0VAHY4bizgADLvOKWP_olEh5NMrS0_D0BeMQVmx7gabMJaqdB8xrtg_RqQunad32VTwAkCG5iw/pub?w=960&amp;h=720" alt="avatar"></p>
+<h1 id="增加管道和环境变量识别"><a href="#增加管道和环境变量识别" class="headerlink" title="增加管道和环境变量识别"></a>增加管道和环境变量识别</h1><p>首先在这个章节我们考虑一个问题，就是在容器中父子进程的通信。其实在初始化的过程中，父子进程就已经有一次通讯了。也就是我们需要启动<code>mydocker init --args</code>的时候，我们传给子进程的参数，包括init command和参数。当出现参数太长或者有特殊字符串的时候，这种办法就会失败。事实上runC采用的就是匿名管道的方法进行通信。我们在这里需要增加一个函数<code>NewPipe()</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">func NewPipe() (*os.File, *os.File, error) &#123;</span><br><span class="line">	read, write, err := os.Pipe()</span><br><span class="line">	if err != nil &#123;</span><br><span class="line">		return nil, nil, err</span><br><span class="line">	&#125;</span><br><span class="line">	return read, write, nil</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func NewParentProcess(tty bool) (*exec.Cmd, *os.File) &#123;</span><br><span class="line">	readPipe, writePipe, err := NewPipe()</span><br><span class="line">	if err != nil &#123;</span><br><span class="line">		log.Errorf(&quot;New pipe error %v&quot;, err)</span><br><span class="line">		return nil, nil</span><br><span class="line">	&#125;</span><br><span class="line">	cmd := exec.Command(&quot;/proc/self/exe&quot;, &quot;init&quot;)</span><br><span class="line">	cmd.SysProcAttr = &amp;syscall.SysProcAttr&#123;</span><br><span class="line">		Cloneflags: syscall.CLONE_NEWUTS | syscall.CLONE_NEWPID | syscall.CLONE_NEWNS |</span><br><span class="line">			syscall.CLONE_NEWNET | syscall.CLONE_NEWIPC,</span><br><span class="line">	&#125;</span><br><span class="line">	if tty &#123;</span><br><span class="line">		cmd.Stdin = os.Stdin</span><br><span class="line">		cmd.Stdout = os.Stdout</span><br><span class="line">		cmd.Stderr = os.Stderr</span><br><span class="line">	&#125;</span><br><span class="line">	cmd.ExtraFiles = []*os.File&#123;readPipe&#125;</span><br><span class="line">	return cmd, writePipe</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>NewPipe通过os创建了一个匿名管道用于父子进程交互。readPipe作为了cmd.ExtraFiles参数传给了init进程，此时，一个进程便拥有了四个文件句柄：标准输入，标准输出，标准错误以及这个readPipe。而写句柄则是传到外部，并将需要运行的command写入，从而让init进程能够读到这些参数。在这之后writePipe就被close了。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>至此，我们为进程添加了隔离环境，资源限制以及管道机制，基本上实现了一个容器进程的运行。</p>
+
+        
+        <br>
+        <div id="comment-container">
+        </div>
+        <div id="disqus_thread"></div>
+
+        <div id="lv-container">
+        </div>
+
+    </div>
+</div>
+
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        <li>
+            <a target="_blank" href="https://twitter.com/swimmingfishLu">
+                            <span class="fa-stack fa-lg">
+                                <i class="iconfont icon-twitter"></i>
+                            </span>
+            </a>
+        </li>
+        
+        
+        <li>
+            <a target="_blank" href="https://www.zhihu.com/people/卢旭辉">
+                            <span class="fa-stack fa-lg">
+                                 <i class="iconfont icon-zhihu"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+        
+        <li>
+            <a target="_blank" href="http://weibo.com/SwimmingfishLu">
+                            <span class="fa-stack fa-lg">
+                                  <i class="iconfont icon-weibo"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+        
+        <li>
+            <a target="_blank" href="https://www.facebook.com/xuhui.lu.169">
+                            <span class="fa-stack fa-lg">
+                                <i class="iconfont icon-facebook"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+        
+        <li>
+            <a target="_blank" href="https://github.com/xuhui-lu">
+                            <span class="fa-stack fa-lg">
+                                <i class="iconfont icon-github"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+        
+        <li>
+            <a target="_blank" href="https://www.linkedin.com/in/xuhui-lu-04108a148">
+                            <span class="fa-stack fa-lg">
+                                <i class="iconfont icon-linkedin"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+    </ul>
+    
+    <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p>
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+    <script>
+        /**
+         *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+         *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+        */
+        if( '' || '')
+        var disqus_config = function () {
+            this.page.url = '';  // Replace PAGE_URL with your page's canonical URL variable
+            this.page.identifier = ''; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+
+        (function() { // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+            s.src = 'https://swimmingfish-blog.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+
+
+
+</html>
