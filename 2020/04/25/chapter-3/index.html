@@ -137,7 +137,8 @@
 
     </div>
     <div class="post-content no-indent">
-        <h1 id="手撕Docker系列-第三章"><a href="#手撕Docker系列-第三章" class="headerlink" title="手撕Docker系列-第三章"></a>手撕Docker系列-第三章</h1><h1 id="Linux-proc文件系统"><a href="#Linux-proc文件系统" class="headerlink" title="Linux proc文件系统"></a>Linux proc文件系统</h1><p>Linux的/proc目录其实不是一个真正的文件系统，因为真正的文件系统通过一系列的metadata对磁盘上的文件进行管理。而/proc下的内容包含了系统runtime的metadata，包括系统内存，mount设备以及一些硬件配置。它只存在于内存中，而不占用外存空间。事实上，它只是提供了一个接口让用户以访问文件的形式访问这些信息。</p>
+        <h1 id="手撕Docker系列-第三章"><a href="#手撕Docker系列-第三章" class="headerlink" title="手撕Docker系列-第三章"></a>手撕Docker系列-第三章</h1><p>今天在这个章节我们会讲如何应用我们前一章的知识，来创建一个容器进程。</p>
+<h1 id="Linux-proc文件系统"><a href="#Linux-proc文件系统" class="headerlink" title="Linux proc文件系统"></a>Linux proc文件系统</h1><p>Linux的/proc目录其实不是一个真正的文件系统，因为真正的文件系统通过一系列的metadata对磁盘上的文件进行管理。而/proc下的内容包含了系统runtime的metadata，包括系统内存，mount设备以及一些硬件配置。它只存在于内存中，而不占用外存空间。事实上，它只是提供了一个接口让用户以访问文件的形式访问这些信息。</p>
 <table>
 <thead>
 <tr>
