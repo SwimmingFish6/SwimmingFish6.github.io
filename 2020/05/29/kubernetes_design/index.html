@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        K8S学习系列（一）：K8S的基本设计 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i> A Future System Architect </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>Xuhui Lu</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>HOME</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>TAGS</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>ARCHIVES</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>ABOUT</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>SEARCH</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Kubernetes的设计理念"><span class="toc-text">Kubernetes的设计理念</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Kubernetes的基本结构"><span class="toc-text">Kubernetes的基本结构</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#设计原则"><span class="toc-text">设计原则</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#API"><span class="toc-text">API</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#控制机制设计原则"><span class="toc-text">控制机制设计原则</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#核心技术概念"><span class="toc-text">核心技术概念</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#API对象"><span class="toc-text">API对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pod"><span class="toc-text">Pod</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Replication-Controller（RC）"><span class="toc-text">Replication Controller（RC）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Replica-Set（RS）"><span class="toc-text">Replica Set（RS）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Deployment"><span class="toc-text">Deployment</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Service"><span class="toc-text">Service</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Job"><span class="toc-text">Job</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DaemonSet"><span class="toc-text">DaemonSet</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#StatefulSet"><span class="toc-text">StatefulSet</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Federation"><span class="toc-text">Federation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Volume"><span class="toc-text">Volume</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Persistent-Volume-Persistent-Volume-Claim"><span class="toc-text">Persistent Volume / Persistent Volume Claim</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Node"><span class="toc-text">Node</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Secret"><span class="toc-text">Secret</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#User-Account-Service-Account"><span class="toc-text">User Account / Service Account</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Namespace"><span class="toc-text">Namespace</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RBAC"><span class="toc-text">RBAC</span></a></li></ol></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">search</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i> A Future System Architect </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        K8S学习系列（一）：K8S的基本设计
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">Post：<span>2020-05-29 00:00:29</span></span>
+        
+        <span class="attr">Tags：/
+        
+        <a class="tag" href="/tags/#K8S" title="K8S">K8S</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">Visit：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content no-indent">
+        <h1 id="Kubernetes的设计理念"><a href="#Kubernetes的设计理念" class="headerlink" title="Kubernetes的设计理念"></a>Kubernetes的设计理念</h1><p>Kubernetes作为目前容器编排领域的几乎垄断型选手，在学习Cloud Native方面是很重要的一环，因此今天开个系列，来记录一下K8S的学习过程。今天主要的内容还是搞清楚K8S的架构和大体上的各个组件和基本功能，之后如果有时间再深入其他的缓解，主要的参考资料是 <code>https://jimmysong.io/kubernetes-handbook</code></p>
+<h1 id="Kubernetes的基本结构"><a href="#Kubernetes的基本结构" class="headerlink" title="Kubernetes的基本结构"></a>Kubernetes的基本结构</h1><p>借用handbook里面的一张图，就描述了整个Kubernetes的大致架构和各个组件之间的交互。主要的部分有两个，一个就是master component，一个是Node。<br><img src="https://jimmysong.io/kubernetes-handbook/images/kubernetes-high-level-component-archtecture.jpg" alt="avatar"></p>
+<p>在Master Component上，主要的组件是etcd， scheduler，controller manager和api server，负责集群状态管理，资源调度，负载均衡等等。而Node也就是K8S真正要管理的资源单位。一个Node下面可以有多个pod。具体的细节我们在本章节后面讨论。在这里本人有个思考，因为kubernetes被称为云操作系统，而Linux则是本地操作系统,如果能将两个系统对比,会不会有比较因缺思厅的东西发生呢?于是我找了两个分层结构图的对比:</p>
+<p>Linux的分层结构：</p>
+<p><img src="https://tecadmin.net/tutorial/wp-content/uploads/2017/10/linux-architecture-image.png" alt="avatar"></p>
+<p>K8S的分层结构：<br><img src="https://jimmysong.io/kubernetes-handbook/images/kubernetes-layers-arch.png" alt="avatar"></p>
+<p>K8S的结构分为核心层（对外提供API构建应用，对内提供插件式应用），应用层（部署，路由和servicemesh部分），管理层（系统度量，自动化，policy和servicemesh部分），接口层（命令行工具）和生态系统（包括外部的集成应用和内部的资源CRI、CNI、CSI、image registry和cloud provider等）。</p>
+<p>如果我们把这个对应到linux的图中，应该是Hardware对应K8S调配的资源，Kernal对应API层，也就是一系列的system library帮助我们在资源上搭建应用，本质上来说，K8S的应用层和管理也应该属于Kernal，因为它做的是一些networking和scheduler的工作。然后到了接口层，很显而易见的对应shell，最后在此之上搭建了appliction。</p>
+<p>总结一下，两个模型对应关系分别是Hardware-&gt;Cloud Computing Resource，Kernal对应核心层，应用层加管理层，Shell对应接口层，Application对应应用层。</p>
+<h1 id="设计原则"><a href="#设计原则" class="headerlink" title="设计原则"></a>设计原则</h1><h2 id="API"><a href="#API" class="headerlink" title="API"></a>API</h2><p>在K8S集群中，每添加一项新功能，就等于引入了对应的API对象。API设计的原则主要有如下几条：</p>
+<ul>
+<li><p><strong>声明式。</strong> 声明式同时也是Cloud Native的一个原则，目的就是防止系统状态出现不一，同时隐藏系统具体完成API的过程。比较典型的一个例子就是replica的数量。如果是声明式，那就直接告诉系统replica是3个，如果是命令式，则需要告诉系统从x到3的过程，包括增减replica。前者的好处就是API调用的过程中已经包含了调用者想要系统最后达到的状态，有助于系统状态的维护，分布式里非常重要。</p>
+</li>
+<li><p><strong>互补可组合。</strong> 对于这一点的理解就是“高内聚，松耦合”。提高对象可重用性。</p>
+</li>
+<li><p><strong>高层API从操作意图出发。</strong> 这一点我的理解就是API的设计需要和操作的意图相结合，让你能够将操作对应到API上，而不是需要比较复杂的API组合才能完成一个操作。</p>
+</li>
+<li><p><strong>低层API根据高层控制需要设计。</strong> 低层API由于不需要被用户直接使用，则是需要根据被高层使用时的可重用性，减少冗余方面考虑。</p>
+</li>
+<li><p><strong>避免简单封装。</strong> 这一点，我的理解是，对于一些封装逻辑很简单的API我们没必要强行组合它们。我们需要让操作者知道这个API对什么对象做了什么事情，而不是简单封装它们而导致API意图不清。</p>
+</li>
+<li><p><strong>API操作复杂度。</strong> 这点很好理解，毕竟是Cloud Native，伸缩性和水平扩展，API操作复杂度不能超过O(N)，不然就没有意义了。</p>
+</li>
+<li><p><strong>API对象状态不依赖网络状态。</strong> API对象在分布式的环境下，即使遭遇网络断开，也能保持稳定的状态。（状态包括？）</p>
+</li>
+<li><p><strong>操作机制不依赖全局状态。</strong> 毕竟分布式环境下全局状态完全同步比较困难，即使还未同步我们也希望它能可用。</p>
+</li>
+</ul>
+<h2 id="控制机制设计原则"><a href="#控制机制设计原则" class="headerlink" title="控制机制设计原则"></a>控制机制设计原则</h2><ul>
+<li>只依赖当前状态</li>
+<li>假设任何错误的可能，并做容错物理</li>
+<li>控制逻辑不能依赖无法监控的内部状态（意思就是可控的，不能说一个子系统状态变化对另一个子系统的状态影响是不可预测的）</li>
+<li>假设任何操作都可能被任何对象拒绝或者错误解析。（即使这样，也不能影响系统的稳定性）</li>
+<li>模块自我修复能力</li>
+<li>模块优雅降级（保证基本服务可用性）</li>
+</ul>
+<h1 id="核心技术概念"><a href="#核心技术概念" class="headerlink" title="核心技术概念"></a>核心技术概念</h1><h2 id="API对象"><a href="#API对象" class="headerlink" title="API对象"></a>API对象</h2><p>每个功能对应的会有API对象，比如Replica Set对应RS。每个API对象有三大类属性：metadata， spec和status。metadata至少包括namespace，name和uid，还有labels标识对象类别，比如env标识不同环境下的API对象。Spec描述了理想状态，status描述了当前状态。比如pod副本数理想状态是3，当前状态是2。下面是一些比较重要的API对象</p>
+<h2 id="Pod"><a href="#Pod" class="headerlink" title="Pod"></a>Pod</h2><p>Pod是K8S中运行部署应用或服务的最小单元，支持多容器。多个容器会在一个pod下面共享网络服务和文件系统。比如一个对外发布的网络服务，一个可能会向外发布，一个可能会拉取新的信息，两个容器被不同的team开发，最终放在一个pod下组成一个微服务。</p>
+<h2 id="Replication-Controller（RC）"><a href="#Replication-Controller（RC）" class="headerlink" title="Replication Controller（RC）"></a>Replication Controller（RC）</h2><p>RC是最早保证Pod高可用的API对象，在K8S比较早期实现，只适用于长期伺服型的业务类型，比如控制小机器人提供高可用的Web服务。</p>
+<h2 id="Replica-Set（RS）"><a href="#Replica-Set（RS）" class="headerlink" title="Replica Set（RS）"></a>Replica Set（RS）</h2><p>RS是新一代RC，同样提供高可用，区别是提供更多匹配样式。一般作为Deployment的理想参数使用。</p>
+<h2 id="Deployment"><a href="#Deployment" class="headerlink" title="Deployment"></a>Deployment</h2><p>部署其实是一个复合操作，包括更新新服务，创建新服务，滚动升级等。滚动升级相当于是RS将新服务的副本数目增长，减少旧服务这样一个复合操作。</p>
+<h2 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h2><p>因为Pod本身所在的物理位置是并不确定的，因此Service提供了服务发现和负载均衡的能力，在Pod更新的过程中同时进行服务IP和端口的更新，保证高可用。负载均衡在K8S中是通过Kube-proxy实现的，一个Node上面一个。</p>
+<h2 id="Job"><a href="#Job" class="headerlink" title="Job"></a>Job</h2><p>Job是K8S用来控制批处理型任务的API对象。批处理的任务是有头有尾的。成功完成的标志根据不同的spec.completions策略而不同：单Pod型任务有一个Pod成功就标志完成；定数成功型任务保证有N个任务全部成功；工作队列型任务根据应用确认的全局成功而标志成功。</p>
+<h2 id="DaemonSet"><a href="#DaemonSet" class="headerlink" title="DaemonSet"></a>DaemonSet</h2><p>后台服务主要要保证每个Node都有一个此类的Pod在运行，包括存储，日志和监控等。</p>
+<h2 id="StatefulSet"><a href="#StatefulSet" class="headerlink" title="StatefulSet"></a>StatefulSet</h2><p>有状态服务集，主要是针对一些有状态的应用，即，即使Pod挂了，我们也希望用同样的名字将其恢复到原来的状态，包括挂载同样的存储（意味着主要使用外挂存储），主要针对Mysql等DB服务，Zookeeper，etcd等状态管理服务等。同时可以作为一种虚拟机保存，因为Container的状态保存其实是很不安全和不可靠的。</p>
+<h2 id="Federation"><a href="#Federation" class="headerlink" title="Federation"></a>Federation</h2><p>主要针对跨地区的kubernetes cluster再进行集群管理，K8S cluster可以注册成为联邦的一份子。不影响cluster内部的逻辑。</p>
+<h2 id="Volume"><a href="#Volume" class="headerlink" title="Volume"></a>Volume</h2><p>Kubernetes集群中的存储卷跟Docker的存储卷有些类似，只不过Docker的存储卷作用范围为一个容器，而Kubernetes的存储卷的生命周期和作用范围是一个Pod。每个Pod中声明的存储卷由Pod中的所有容器共享。</p>
+<h2 id="Persistent-Volume-Persistent-Volume-Claim"><a href="#Persistent-Volume-Persistent-Volume-Claim" class="headerlink" title="Persistent Volume / Persistent Volume Claim"></a>Persistent Volume / Persistent Volume Claim</h2><p>PV和PVC的关系与Node和Pod的关系类似。PV和Node是资源提供者，PVC和Pod是资源使用者。PV和PVC使得K8S cluster的存储抽象化。</p>
+<h2 id="Node"><a href="#Node" class="headerlink" title="Node"></a>Node</h2><p>Node就是Pod所在的主机，无论是物理机还是虚拟机。</p>
+<h2 id="Secret"><a href="#Secret" class="headerlink" title="Secret"></a>Secret</h2><p>Secret对象用来传递密码，密钥，证书等。</p>
+<h2 id="User-Account-Service-Account"><a href="#User-Account-Service-Account" class="headerlink" title="User Account / Service Account"></a>User Account / Service Account</h2><p>User Account标识用户，Service Account标识服务。</p>
+<h2 id="Namespace"><a href="#Namespace" class="headerlink" title="Namespace"></a>Namespace</h2><p>Namespace为K8S Cluster提供虚拟隔离，初始namespace包括default和kube-system。</p>
+<h2 id="RBAC"><a href="#RBAC" class="headerlink" title="RBAC"></a>RBAC</h2><p>权限控制，不必多说，所有权限控制系统都叫这个名字。</p>
+
+        
+        <br>
+        <div id="comment-container">
+        </div>
+        <div id="disqus_thread"></div>
+
+        <div id="lv-container">
+        </div>
+
+    </div>
+</div>
+
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        <li>
+            <a target="_blank" href="https://twitter.com/swimmingfishLu">
+                            <span class="fa-stack fa-lg">
+                                <i class="iconfont icon-twitter"></i>
+                            </span>
+            </a>
+        </li>
+        
+        
+        <li>
+            <a target="_blank" href="https://www.zhihu.com/people/卢旭辉">
+                            <span class="fa-stack fa-lg">
+                                 <i class="iconfont icon-zhihu"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+        
+        <li>
+            <a target="_blank" href="http://weibo.com/SwimmingfishLu">
+                            <span class="fa-stack fa-lg">
+                                  <i class="iconfont icon-weibo"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+        
+        <li>
+            <a target="_blank" href="https://www.facebook.com/xuhui.lu.169">
+                            <span class="fa-stack fa-lg">
+                                <i class="iconfont icon-facebook"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+        
+        <li>
+            <a target="_blank" href="https://github.com/xuhui-lu">
+                            <span class="fa-stack fa-lg">
+                                <i class="iconfont icon-github"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+        
+        <li>
+            <a target="_blank" href="https://www.linkedin.com/in/xuhui-lu-04108a148">
+                            <span class="fa-stack fa-lg">
+                                <i class="iconfont icon-linkedin"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+    </ul>
+    
+    <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p>
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+    <script>
+        /**
+         *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+         *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+        */
+        if( '' || '')
+        var disqus_config = function () {
+            this.page.url = '';  // Replace PAGE_URL with your page's canonical URL variable
+            this.page.identifier = ''; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+
+        (function() { // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+            s.src = 'https://swimmingfish-blog.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+
+
+
+</html>
