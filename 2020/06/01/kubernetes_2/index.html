@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        K8S学习系列（二）：开放接口 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i> A Future System Architect </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>Xuhui Lu</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#K8S学习系列（二）：开放接口"><span class="toc-text">K8S学习系列（二）：开放接口    </span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CRI"><span class="toc-text">CRI</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#接口标准"><span class="toc-text">接口标准</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#支持容器运行时"><span class="toc-text">支持容器运行时</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CNI"><span class="toc-text">CNI</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#接口定义"><span class="toc-text">接口定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可用插件"><span class="toc-text">可用插件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Main：接口创建"><span class="toc-text">Main：接口创建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IPAM：IP地址分配"><span class="toc-text">IPAM：IP地址分配</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Meta：其它插件"><span class="toc-text">Meta：其它插件</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CSI"><span class="toc-text">CSI</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#预配置"><span class="toc-text">预配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#附着和挂载"><span class="toc-text">附着和挂载</span></a></li></ol></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i> A Future System Architect </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        K8S学习系列（二）：开放接口
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2020-06-01 00:13:13</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#OAuth" title="OAuth">OAuth</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content no-indent">
+        <h1 id="K8S学习系列（二）：开放接口"><a href="#K8S学习系列（二）：开放接口" class="headerlink" title="K8S学习系列（二）：开放接口    "></a>K8S学习系列（二）：开放接口    </h1><p>在K8S里，主要开放了三个接口，对接不同的后端</p>
+<ul>
+<li>CRI（Container Runtime Interface）：容器运行时接口，提供计算资源</li>
+<li>CNI（Container Network Interface）：容器网络接口，提供网络资源</li>
+<li>CSI（Container Storage Interface）：容器存储接口，提供存储资源</li>
+</ul>
+<h1 id="CRI"><a href="#CRI" class="headerlink" title="CRI"></a>CRI</h1><p>CRI定义了容器和镜像的服务的接口，因为容器运行时和镜像的生命周期彼此隔离，因此需要定义两个服务。定义于<code>pkg/kubelet/apis/cri/runtime/v1alpha2/api.proto</code>。</p>
+<p><img src="https://jimmysong.io/kubernetes-handbook/images/cri-architecture.png" alt="avatar"></p>
+<h2 id="接口标准"><a href="#接口标准" class="headerlink" title="接口标准"></a>接口标准</h2><p>CRI的services包括RuntimeService和ImageService。而Kubelet则通过grpc Client运行，以grpc与k8s通信。</p>
+<ul>
+<li>RuntimeService：容器和Sandbox运行时管理。</li>
+<li>ImageService：提供了从镜像仓库拉取、查看、和移除镜像的RPC。</li>
+</ul>
+<p>主要的接口如下所示，在这里花大篇幅贴出接口的代码也是可以让读者更好地理解这些接口到底做了什么。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line">// Runtime service defines the public APIs for remote container runtimes</span><br><span class="line">service RuntimeService &#123;</span><br><span class="line">    // Version returns the runtime name, runtime version, and runtime API version.</span><br><span class="line">    rpc Version(VersionRequest) returns (VersionResponse) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    // RunPodSandbox creates and starts a pod-level sandbox. Runtimes must ensure</span><br><span class="line">    // the sandbox is in the ready state on success.</span><br><span class="line">    rpc RunPodSandbox(RunPodSandboxRequest) returns (RunPodSandboxResponse) &#123;&#125;</span><br><span class="line">    // StopPodSandbox stops any running process that is part of the sandbox and</span><br><span class="line">    // reclaims network resources (e.g., IP addresses) allocated to the sandbox.</span><br><span class="line">    // If there are any running containers in the sandbox, they must be forcibly</span><br><span class="line">    // terminated.</span><br><span class="line">    // This call is idempotent, and must not return an error if all relevant</span><br><span class="line">    // resources have already been reclaimed. kubelet will call StopPodSandbox</span><br><span class="line">    // at least once before calling RemovePodSandbox. It will also attempt to</span><br><span class="line">    // reclaim resources eagerly, as soon as a sandbox is not needed. Hence,</span><br><span class="line">    // multiple StopPodSandbox calls are expected.</span><br><span class="line">    rpc StopPodSandbox(StopPodSandboxRequest) returns (StopPodSandboxResponse) &#123;&#125;</span><br><span class="line">    // RemovePodSandbox removes the sandbox. If there are any running containers</span><br><span class="line">    // in the sandbox, they must be forcibly terminated and removed.</span><br><span class="line">    // This call is idempotent, and must not return an error if the sandbox has</span><br><span class="line">    // already been removed.</span><br><span class="line">    rpc RemovePodSandbox(RemovePodSandboxRequest) returns (RemovePodSandboxResponse) &#123;&#125;</span><br><span class="line">    // PodSandboxStatus returns the status of the PodSandbox. If the PodSandbox is not</span><br><span class="line">    // present, returns an error.</span><br><span class="line">    rpc PodSandboxStatus(PodSandboxStatusRequest) returns (PodSandboxStatusResponse) &#123;&#125;</span><br><span class="line">    // ListPodSandbox returns a list of PodSandboxes.</span><br><span class="line">    rpc ListPodSandbox(ListPodSandboxRequest) returns (ListPodSandboxResponse) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    // CreateContainer creates a new container in specified PodSandbox</span><br><span class="line">    rpc CreateContainer(CreateContainerRequest) returns (CreateContainerResponse) &#123;&#125;</span><br><span class="line">    // StartContainer starts the container.</span><br><span class="line">    rpc StartContainer(StartContainerRequest) returns (StartContainerResponse) &#123;&#125;</span><br><span class="line">    // StopContainer stops a running container with a grace period (i.e., timeout).</span><br><span class="line">    // This call is idempotent, and must not return an error if the container has</span><br><span class="line">    // already been stopped.</span><br><span class="line">    // TODO: what must the runtime do after the grace period is reached?</span><br><span class="line">    rpc StopContainer(StopContainerRequest) returns (StopContainerResponse) &#123;&#125;</span><br><span class="line">    // RemoveContainer removes the container. If the container is running, the</span><br><span class="line">    // container must be forcibly removed.</span><br><span class="line">    // This call is idempotent, and must not return an error if the container has</span><br><span class="line">    // already been removed.</span><br><span class="line">    rpc RemoveContainer(RemoveContainerRequest) returns (RemoveContainerResponse) &#123;&#125;</span><br><span class="line">    // ListContainers lists all containers by filters.</span><br><span class="line">    rpc ListContainers(ListContainersRequest) returns (ListContainersResponse) &#123;&#125;</span><br><span class="line">    // ContainerStatus returns status of the container. If the container is not</span><br><span class="line">    // present, returns an error.</span><br><span class="line">    rpc ContainerStatus(ContainerStatusRequest) returns (ContainerStatusResponse) &#123;&#125;</span><br><span class="line">    // UpdateContainerResources updates ContainerConfig of the container.</span><br><span class="line">    rpc UpdateContainerResources(UpdateContainerResourcesRequest) returns (UpdateContainerResourcesResponse) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    // ExecSync runs a command in a container synchronously.</span><br><span class="line">    rpc ExecSync(ExecSyncRequest) returns (ExecSyncResponse) &#123;&#125;</span><br><span class="line">    // Exec prepares a streaming endpoint to execute a command in the container.</span><br><span class="line">    rpc Exec(ExecRequest) returns (ExecResponse) &#123;&#125;</span><br><span class="line">    // Attach prepares a streaming endpoint to attach to a running container.</span><br><span class="line">    rpc Attach(AttachRequest) returns (AttachResponse) &#123;&#125;</span><br><span class="line">    // PortForward prepares a streaming endpoint to forward ports from a PodSandbox.</span><br><span class="line">    rpc PortForward(PortForwardRequest) returns (PortForwardResponse) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    // ContainerStats returns stats of the container. If the container does not</span><br><span class="line">    // exist, the call returns an error.</span><br><span class="line">    rpc ContainerStats(ContainerStatsRequest) returns (ContainerStatsResponse) &#123;&#125;</span><br><span class="line">    // ListContainerStats returns stats of all running containers.</span><br><span class="line">    rpc ListContainerStats(ListContainerStatsRequest) returns (ListContainerStatsResponse) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    // UpdateRuntimeConfig updates the runtime configuration based on the given request.</span><br><span class="line">    rpc UpdateRuntimeConfig(UpdateRuntimeConfigRequest) returns (UpdateRuntimeConfigResponse) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    // Status returns the status of the runtime.</span><br><span class="line">    rpc Status(StatusRequest) returns (StatusResponse) &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// ImageService defines the public APIs for managing images.</span><br><span class="line">service ImageService &#123;</span><br><span class="line">    // ListImages lists existing images.</span><br><span class="line">    rpc ListImages(ListImagesRequest) returns (ListImagesResponse) &#123;&#125;</span><br><span class="line">    // ImageStatus returns the status of the image. If the image is not</span><br><span class="line">    // present, returns a response with ImageStatusResponse.Image set to</span><br><span class="line">    // nil.</span><br><span class="line">    rpc ImageStatus(ImageStatusRequest) returns (ImageStatusResponse) &#123;&#125;</span><br><span class="line">    // PullImage pulls an image with authentication config.</span><br><span class="line">    rpc PullImage(PullImageRequest) returns (PullImageResponse) &#123;&#125;</span><br><span class="line">    // RemoveImage removes the image.</span><br><span class="line">    // This call is idempotent, and must not return an error if the image has</span><br><span class="line">    // already been removed.</span><br><span class="line">    rpc RemoveImage(RemoveImageRequest) returns (RemoveImageResponse) &#123;&#125;</span><br><span class="line">    // ImageFSInfo returns information of the filesystem that is used to store images.</span><br><span class="line">    rpc ImageFsInfo(ImageFsInfoRequest) returns (ImageFsInfoResponse) &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="支持容器运行时"><a href="#支持容器运行时" class="headerlink" title="支持容器运行时"></a>支持容器运行时</h2><p>CRI可以支持不同的容器运行时，包括cri-o，cri-containerd，rkt，frakti，docker。CRI由<a href="https://kubernetes.slack.com/archives/sig-node" target="_blank" rel="noopener">SIG-Node</a>维护。</p>
+<p>有一部分容器只实现了OCI标准，可以通过CRI-O来将自己作为K8S的容器运行时。包括：</p>
+<ul>
+<li>Clear Containers</li>
+<li>Kata Containers</li>
+<li>gVsior</li>
+</ul>
+<h1 id="CNI"><a href="#CNI" class="headerlink" title="CNI"></a>CNI</h1><p>CNI（Container Network Interface）是CNCF旗下的一个项目，由一组用于配置Linux容器的网络接口的规范和库组成，同时包含了一些插件。CNI是三个接口中最复杂的一个，其模型图如下所示：<br><img src="https://img-blog.csdnimg.cn/20190815153903714.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3RleHRkZW1vMTIz,size_16,color_FFFFFF,t_70" alt="avator"></p>
+<p>它主要解决的问题是连接了网络插件和容器管理系统。每个容器内部有自己的网络栈，包括对容器的接口，路由表以及DNS配置的管理。也就是在Docker中隔离容器的Network Namespace。而如果想让它和外界网络交流，则需要其进行网络栈的配置。通过CNI，kubelet启动infra容器以后，就可以通过调用CNI直接配置好容器的Network Namespace的网络栈（包括网卡（Network Interface、回环设备（Loopback Device）、路由表（Routing Table）和iptables规则）。我们通过实现创建网络的网络方案，之后再通过实现对应的插件，将容器加入网络。</p>
+<p>上知乎找了张图，大致流程就是这样。<br><img src="https://pic1.zhimg.com/v2-1e6f56f9c44c07a129176cc71c6986fc_b.jpg" alt="avator"></p>
+<h2 id="接口定义"><a href="#接口定义" class="headerlink" title="接口定义"></a>接口定义</h2><p>下面是CNI定义的一系列控制容器网络配置的接口。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">type CNI interface &#123;</span><br><span class="line">    AddNetworkList(net *NetworkConfigList, rt *RuntimeConf) (types.Result, error)</span><br><span class="line">    DelNetworkList(net *NetworkConfigList, rt *RuntimeConf) error</span><br><span class="line"></span><br><span class="line">    AddNetwork(net *NetworkConfig, rt *RuntimeConf) (types.Result, error)</span><br><span class="line">    DelNetwork(net *NetworkConfig, rt *RuntimeConf) error</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="可用插件"><a href="#可用插件" class="headerlink" title="可用插件"></a>可用插件</h2><h3 id="Main：接口创建"><a href="#Main：接口创建" class="headerlink" title="Main：接口创建"></a>Main：接口创建</h3><ul>
+<li>bridge：创建网桥，并添加主机和容器到该网桥</li>
+<li>ipvlan：在容器中添加一个ipvlan接口</li>
+<li>loopback：创建一个回环接口</li>
+<li>macvlan：创建一个新的MAC地址，将所有的流量转发到容器</li>
+<li>ptp：创建veth对</li>
+<li>vlan：分配一个vlan设备<h3 id="IPAM：IP地址分配"><a href="#IPAM：IP地址分配" class="headerlink" title="IPAM：IP地址分配"></a>IPAM：IP地址分配</h3></li>
+<li>dhcp：在主机上运行守护程序，代表容器发出DHCP请求</li>
+<li>host-local：维护分配IP的本地数据库<h3 id="Meta：其它插件"><a href="#Meta：其它插件" class="headerlink" title="Meta：其它插件"></a>Meta：其它插件</h3></li>
+<li>flannel：根据flannel的配置文件创建接口</li>
+<li>tuning：调整现有接口的sysctl参数</li>
+<li>portmap：一个基于iptables的portmapping插件。将端口从主机的地址空间映射到容器。</li>
+</ul>
+<h1 id="CSI"><a href="#CSI" class="headerlink" title="CSI"></a>CSI</h1><p>CSI（Container Storage Interface）代表容器存储接口。CSI借助CSI容器编排系统，可以将任意存储系统暴露给容器工作负载。</p>
+<h2 id="预配置"><a href="#预配置" class="headerlink" title="预配置"></a>预配置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolume</span><br><span class="line">metadata:</span><br><span class="line">  name: my-manually-created-pv</span><br><span class="line">spec:</span><br><span class="line">  capacity:</span><br><span class="line">    storage: 5Gi</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  persistentVolumeReclaimPolicy: Retain</span><br><span class="line">  csi:</span><br><span class="line">    driver: com.example.team/csi-driver</span><br><span class="line">    volumeHandle: existingVolumeName</span><br><span class="line">    readOnly: false</span><br></pre></td></tr></table></figure>
+<h2 id="附着和挂载"><a href="#附着和挂载" class="headerlink" title="附着和挂载"></a>附着和挂载</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">kind: Pod</span><br><span class="line">apiVersion: v1</span><br><span class="line">metadata:</span><br><span class="line">  name: my-pod</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">    - name: my-frontend</span><br><span class="line">      image: dockerfile/nginx</span><br><span class="line">      volumeMounts:</span><br><span class="line">      - mountPath: &quot;/var/www/html&quot;</span><br><span class="line">        name: my-csi-volume</span><br><span class="line">  volumes:</span><br><span class="line">    - name: my-csi-volume</span><br><span class="line">      persistentVolumeClaim:</span><br><span class="line">        claimName: my-request-for-storage</span><br></pre></td></tr></table></figure>
+        
+        <br>
+        <div id="comment-container">
+        </div>
+        <div id="disqus_thread"></div>
+
+        <div id="lv-container">
+        </div>
+
+    </div>
+</div>
+
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        <li>
+            <a target="_blank" href="https://twitter.com/swimmingfishLu">
+                            <span class="fa-stack fa-lg">
+                                <i class="iconfont icon-twitter"></i>
+                            </span>
+            </a>
+        </li>
+        
+        
+        <li>
+            <a target="_blank" href="https://www.zhihu.com/people/卢旭辉">
+                            <span class="fa-stack fa-lg">
+                                 <i class="iconfont icon-zhihu"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+        
+        <li>
+            <a target="_blank" href="http://weibo.com/SwimmingfishLu">
+                            <span class="fa-stack fa-lg">
+                                  <i class="iconfont icon-weibo"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+        
+        <li>
+            <a target="_blank" href="https://www.facebook.com/xuhui.lu.169">
+                            <span class="fa-stack fa-lg">
+                                <i class="iconfont icon-facebook"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+        
+        <li>
+            <a target="_blank" href="https://github.com/xuhui-lu">
+                            <span class="fa-stack fa-lg">
+                                <i class="iconfont icon-github"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+        
+        <li>
+            <a target="_blank" href="https://www.linkedin.com/in/xuhui-lu-04108a148">
+                            <span class="fa-stack fa-lg">
+                                <i class="iconfont icon-linkedin"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+    </ul>
+    
+    <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p>
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+    <script>
+        /**
+         *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+         *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+        */
+        if( '' || '')
+        var disqus_config = function () {
+            this.page.url = '';  // Replace PAGE_URL with your page's canonical URL variable
+            this.page.identifier = ''; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+
+        (function() { // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+            s.src = 'https://swimmingfish-blog.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+
+
+
+</html>
