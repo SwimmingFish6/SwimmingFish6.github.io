@@ -56,32 +56,32 @@
             <li>
                 <a href="/">
                     <i class="iconfont icon-shouye1"></i>
-                    <span>主页</span>
+                    <span>HOME</span>
                 </a>
             </li>
             <li class="active">
                 <a href="/tags">
                     <i class="iconfont icon-biaoqian1"></i>
-                    <span>标签</span>
+                    <span>TAGS</span>
                 </a>
             </li>
             <li>
                 <a href="/archives">
                     <i class="iconfont icon-guidang2"></i>
-                    <span>存档</span>
+                    <span>ARCHIVES</span>
                 </a>
             </li>
             <li>
                 <a href="/about/">
                     <i class="iconfont icon-guanyu2"></i>
-                    <span>关于</span>
+                    <span>ABOUT</span>
                 </a>
             </li>
             
             <li>
                 <a id="search">
                     <i class="iconfont icon-sousuo1"></i>
-                    <span>搜索</span>
+                    <span>SEARCH</span>
                 </a>
             </li>
             
@@ -96,7 +96,7 @@
         <div class="search-input">
             <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
             <input id="search-input">
-            <span id="begin-search">搜索</span>
+            <span id="begin-search">search</span>
         </div>
         <div class="search-result-container" id="search-result-container">
 
@@ -116,9 +116,11 @@
     
     <a href="#Docker" title="Docker" rel="3">Docker</a>
     
-    <a href="#OAuth" title="OAuth" rel="2">OAuth</a>
+    <a href="#Oauth" title="Oauth" rel="1">Oauth</a>
     
-    <a href="#K8S" title="K8S" rel="1">K8S</a>
+    <a href="#K8S" title="K8S" rel="3">K8S</a>
+    
+    <a href="#OAuth" title="OAuth" rel="1">OAuth</a>
     
 </div>
 
@@ -174,24 +176,6 @@
     <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
     </li> -->
     <div class="post-preview">
-        <a href="/2020/04/25/chapter-3/">
-            <h2 class="post-title">
-                手撕Docker系列-第三章
-            </h2>
-            
-            <h3 class="post-subtitle">
-                肥宅程序员
-            </h3>
-            
-        </a>
-        <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-    </div>
-    
-    <!-- <li class="listing-item">
-    <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-    <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-    </li> -->
-    <div class="post-preview">
         <a href="/2020/03/24/chapter-2/">
             <h2 class="post-title">
                 手撕Docker系列-第二章
@@ -205,21 +189,14 @@
         <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
     </div>
     
-</div>
-
-<div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="OAuth">
-                    <span class="tag-text">OAuth</span>
-                </span>
-    
     <!-- <li class="listing-item">
     <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
     <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
     </li> -->
     <div class="post-preview">
-        <a href="/2020/06/01/kubernetes_2/">
+        <a href="/2020/04/25/chapter-3/">
             <h2 class="post-title">
-                K8S学习系列（二）：开放接口
+                手撕Docker系列-第三章
             </h2>
             
             <h3 class="post-subtitle">
@@ -230,14 +207,21 @@
         <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
     </div>
     
+</div>
+
+<div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="Oauth">
+                    <span class="tag-text">Oauth</span>
+                </span>
+    
     <!-- <li class="listing-item">
     <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
     <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
     </li> -->
     <div class="post-preview">
-        <a href="/2020/05/24/sessions-in-microservices/">
+        <a href="/2020/07/06/Oauth2/">
             <h2 class="post-title">
-                OAuth2和OIDC
+                Oauth2.0
             </h2>
             
             <h3 class="post-subtitle">
@@ -260,9 +244,70 @@
     <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
     </li> -->
     <div class="post-preview">
+        <a href="/2020/07/06/kubernetes_3/">
+            <h2 class="post-title">
+                K8S学习系列（四）：服务发现
+            </h2>
+            
+            <h3 class="post-subtitle">
+                肥宅程序员
+            </h3>
+            
+        </a>
+        <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+    </div>
+    
+    <!-- <li class="listing-item">
+    <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+    <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+    </li> -->
+    <div class="post-preview">
         <a href="/2020/05/29/kubernetes_1/">
             <h2 class="post-title">
                 K8S学习系列（一）：K8S的基本设计
+            </h2>
+            
+            <h3 class="post-subtitle">
+                肥宅程序员
+            </h3>
+            
+        </a>
+        <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+    </div>
+    
+    <!-- <li class="listing-item">
+    <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+    <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+    </li> -->
+    <div class="post-preview">
+        <a href="/2020/06/01/kubernetes_2/">
+            <h2 class="post-title">
+                K8S学习系列（二）：开放接口
+            </h2>
+            
+            <h3 class="post-subtitle">
+                肥宅程序员
+            </h3>
+            
+        </a>
+        <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+    </div>
+    
+</div>
+
+<div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="OAuth">
+                    <span class="tag-text">OAuth</span>
+                </span>
+    
+    <!-- <li class="listing-item">
+    <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+    <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+    </li> -->
+    <div class="post-preview">
+        <a href="/2020/05/24/sessions-in-microservices/">
+            <h2 class="post-title">
+                OAuth2和OIDC
             </h2>
             
             <h3 class="post-subtitle">
