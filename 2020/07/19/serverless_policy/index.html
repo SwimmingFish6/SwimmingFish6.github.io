@@ -11,7 +11,7 @@
 
     <title>
         
-        `Serverless in the Wild: Characterizing and Optimizing the Serverless Workload at a Large Cloud Provider` 阅读笔记 - undefined
+        Serverless In Wild阅读笔记 - undefined
         
     </title>
 
@@ -56,32 +56,32 @@
             <li>
                 <a href="/">
                     <i class="iconfont icon-shouye1"></i>
-                    <span>HOME</span>
+                    <span>主页</span>
                 </a>
             </li>
             <li>
                 <a href="/tags">
                     <i class="iconfont icon-biaoqian1"></i>
-                    <span>TAGS</span>
+                    <span>标签</span>
                 </a>
             </li>
             <li>
                 <a href="/archives">
                     <i class="iconfont icon-guidang2"></i>
-                    <span>ARCHIVES</span>
+                    <span>存档</span>
                 </a>
             </li>
             <li>
                 <a href="/about/">
                     <i class="iconfont icon-guanyu2"></i>
-                    <span>ABOUT</span>
+                    <span>关于</span>
                 </a>
             </li>
             
             <li>
                 <a id="search">
                     <i class="iconfont icon-sousuo1"></i>
-                    <span>SEARCH</span>
+                    <span>搜索</span>
                 </a>
             </li>
             
@@ -100,7 +100,7 @@
         <div class="search-input">
             <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
             <input id="search-input">
-            <span id="begin-search">search</span>
+            <span id="begin-search">搜索</span>
         </div>
         <div class="search-result-container" id="search-result-container">
 
@@ -119,25 +119,26 @@
 
 <div class="post-container">
     <div class="post-title">
-        `Serverless in the Wild: Characterizing and Optimizing the Serverless Workload at a Large Cloud Provider` 阅读笔记
+        Serverless In Wild阅读笔记
     </div>
 
     <div class="post-meta">
-        <span class="attr">Post：<span>2020-07-19 20:24:10</span></span>
+        <span class="attr">发布于：<span>2020-07-19 20:24:10</span></span>
         
-        <span class="attr">Tags：/
+        <span class="attr">标签：/
         
         <a class="tag" href="/tags/#Cloud Native" title="Cloud Native">Cloud Native</a>
         <span>/</span>
         
         
         </span>
-        <span class="attr">Visit：<span id="busuanzi_value_page_pv"></span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
 </span>
 
     </div>
     <div class="post-content no-indent">
-        <h1 id="Serverless-in-the-Wild-阅读笔记"><a href="#Serverless-in-the-Wild-阅读笔记" class="headerlink" title="Serverless in the Wild 阅读笔记"></a>Serverless in the Wild 阅读笔记</h1><h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>Faas（Function as a Service）是非常流行的用于Serverless on the cloud的一种方式。这种方式将资源分配相关的任务全都交给了云端，从而降低了资源的消耗，同时给调用的客户造成了一种service是一直可用的假像。因此这篇论文的目标就是介绍了一种资源管理策略，从而减少资源的cold start和计算资源的消耗。</p>
+        <h1 id="Serverless-in-the-Wild-阅读笔记"><a href="#Serverless-in-the-Wild-阅读笔记" class="headerlink" title="Serverless in the Wild 阅读笔记"></a>Serverless in the Wild 阅读笔记</h1><p>本文的论文标题是 <a href="https://arxiv.org/pdf/2003.03423.pdf" target="_blank" rel="noopener"><code>Serverless in the Wild: Characterizing and Optimizing the Serverless Workload at a Large Cloud Provider</code></a>。</p>
+<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>Faas（Function as a Service）是非常流行的用于Serverless on the cloud的一种方式。这种方式将资源分配相关的任务全都交给了云端，从而降低了资源的消耗，同时给调用的客户造成了一种service是一直可用的假像。因此这篇论文的目标就是介绍了一种资源管理策略，从而减少资源的cold start和计算资源的消耗。</p>
 <p>在这里，我们从三方面来衡量程序能执行多快和资源消耗多少：</p>
 <ul>
 <li>首先是程序执行需要把相关code加载到内存，因此如果code在内存里，程序执行就很快。</li>
@@ -186,13 +187,13 @@
 <h3 id="Tracking-overhead"><a href="#Tracking-overhead" class="headerlink" title="Tracking overhead"></a>Tracking overhead</h3><p>我们也要考虑追踪相关参数所需要花费的overhead。比如，用非常小的数据来保存application的状态。</p>
 <h3 id="Execution-overhead"><a href="#Execution-overhead" class="headerlink" title="Execution overhead"></a>Execution overhead</h3><p>function的执行时间是非常短的，因此我们希望execution的overhead也要很小，不然，缩短function的执行时间就没有意义了。</p>
 <h2 id="Hybrid-Histogram-Policy"><a href="#Hybrid-Histogram-Policy" class="headerlink" title="Hybrid Histogram Policy"></a>Hybrid Histogram Policy</h2><p>为了解决挑战一和挑战二，这个策略会适应每个应用的调用频率和模式。每次程序执行完以后，会被立刻从内存unload，然后经过一个pre-warming window以后，加载到内存来应对潜在的调用，之后，保留keep-alive window。如果pre-warming window为0，我们则在keep-alive window以后unload程序。这种情况下会出现三种scenarios。</p>
-<p><img src="../img/serverless_scenarios.png" alt></p>
+<p><img src="img/serverless_scenarios.png" alt></p>
 <p>其实就是一种pre-warm为0，keep-alive总是时间内，下一个invocation来了。一种是pre-warm以后keep-alive时间内，下一个invocation到了，还有一个就是pre-warm和keep alive都过了，invocation才到。</p>
 <p>这个策略主要有三个主要组件：</p>
 <ul>
 <li>range-limited histogram来捕捉每个应用的‘idle time（IT）’</li>
 <li>当histogram还不是很有代表性的时候，一个标准的keep-alive方法（不同于fixed policy）</li>
-<li>一个时间序列预测的组件（当有太多的IT的时候）。<br><img src="../img/serverless_components.png" alt></li>
+<li>一个时间序列预测的组件（当有太多的IT的时候）。<br><img src="img/serverless_components.png" alt></li>
 </ul>
 <h3 id="Range-limited-histogram"><a href="#Range-limited-histogram" class="headerlink" title="Range-limited histogram"></a>Range-limited histogram</h3><p>我们通过一个compact的histogram来追踪IT分布。我们可以设置这个窗口，比如4个小时，而IT的单位则是用分钟表示，这也意味着keep-alive和pre-warm的时间单位也是分钟。这可以在metadata size和policy的准确性之间取得一个平衡。然后我们使用这个histogram的头部作为pre-warm，尾部作为keep-alive。去除一些噪音，我们可以取5%-99%之间的数据作为参考。此外，同时，我们还有一个可配置的margin值。给pre-warm时间减少一个margin%，给keep-alive时间增加一个margin%来减少误差。</p>
 <h3 id="标准keep-alive"><a href="#标准keep-alive" class="headerlink" title="标准keep-alive"></a>标准keep-alive</h3><p>当application刚刚起步，观察到的IT不够，或者IT分布突然变成了一个新的pattern（not representative），我们开始采用standard keep-alive。这个方法下，pre-warm=0，而keep-alive等于histogram的范围。这个是为了减少在application的pattern还没被观测到的时候cold starts的次数。</p>
@@ -202,7 +203,7 @@
 <ul>
 <li>controller。因为所有的invocation都经过controller，我们将histogram和其他一些metadata放在这里。同时更新计算pre-warm和keep-alive时间，并将pre-warm以messga的形式发给invoker。</li>
 <li>API。我们将keep-alive作为参数，通过invocation request发给invoker，为此增加了一个ActivationMessage的API。</li>
-<li>Invoker。之前unload container是基于ContainerProxy module的time-out。我们修改这个使其基于keep-alive参数。<br><img src="../img/openwhisk_architecture.png" alt></li>
+<li>Invoker。之前unload container是基于ContainerProxy module的time-out。我们修改这个使其基于keep-alive参数。<br><img src="img/openwhisk_architecture.png" alt></li>
 </ul>
 
         
