@@ -187,13 +187,13 @@
 <h3 id="Tracking-overhead"><a href="#Tracking-overhead" class="headerlink" title="Tracking overhead"></a>Tracking overhead</h3><p>我们也要考虑追踪相关参数所需要花费的overhead。比如，用非常小的数据来保存application的状态。</p>
 <h3 id="Execution-overhead"><a href="#Execution-overhead" class="headerlink" title="Execution overhead"></a>Execution overhead</h3><p>function的执行时间是非常短的，因此我们希望execution的overhead也要很小，不然，缩短function的执行时间就没有意义了。</p>
 <h2 id="Hybrid-Histogram-Policy"><a href="#Hybrid-Histogram-Policy" class="headerlink" title="Hybrid Histogram Policy"></a>Hybrid Histogram Policy</h2><p>为了解决挑战一和挑战二，这个策略会适应每个应用的调用频率和模式。每次程序执行完以后，会被立刻从内存unload，然后经过一个pre-warming window以后，加载到内存来应对潜在的调用，之后，保留keep-alive window。如果pre-warming window为0，我们则在keep-alive window以后unload程序。这种情况下会出现三种scenarios。</p>
-<p><img src="img/serverless_scenarios.png" alt></p>
+<p><img src="serverless_scenarios.png" alt="scenarios"></p>
 <p>其实就是一种pre-warm为0，keep-alive总是时间内，下一个invocation来了。一种是pre-warm以后keep-alive时间内，下一个invocation到了，还有一个就是pre-warm和keep alive都过了，invocation才到。</p>
 <p>这个策略主要有三个主要组件：</p>
 <ul>
 <li>range-limited histogram来捕捉每个应用的‘idle time（IT）’</li>
 <li>当histogram还不是很有代表性的时候，一个标准的keep-alive方法（不同于fixed policy）</li>
-<li>一个时间序列预测的组件（当有太多的IT的时候）。<br><img src="img/serverless_components.png" alt></li>
+<li>一个时间序列预测的组件（当有太多的IT的时候）。<br><img src="serverless_components.png" alt="components"></li>
 </ul>
 <h3 id="Range-limited-histogram"><a href="#Range-limited-histogram" class="headerlink" title="Range-limited histogram"></a>Range-limited histogram</h3><p>我们通过一个compact的histogram来追踪IT分布。我们可以设置这个窗口，比如4个小时，而IT的单位则是用分钟表示，这也意味着keep-alive和pre-warm的时间单位也是分钟。这可以在metadata size和policy的准确性之间取得一个平衡。然后我们使用这个histogram的头部作为pre-warm，尾部作为keep-alive。去除一些噪音，我们可以取5%-99%之间的数据作为参考。此外，同时，我们还有一个可配置的margin值。给pre-warm时间减少一个margin%，给keep-alive时间增加一个margin%来减少误差。</p>
 <h3 id="标准keep-alive"><a href="#标准keep-alive" class="headerlink" title="标准keep-alive"></a>标准keep-alive</h3><p>当application刚刚起步，观察到的IT不够，或者IT分布突然变成了一个新的pattern（not representative），我们开始采用standard keep-alive。这个方法下，pre-warm=0，而keep-alive等于histogram的范围。这个是为了减少在application的pattern还没被观测到的时候cold starts的次数。</p>
@@ -203,7 +203,7 @@
 <ul>
 <li>controller。因为所有的invocation都经过controller，我们将histogram和其他一些metadata放在这里。同时更新计算pre-warm和keep-alive时间，并将pre-warm以messga的形式发给invoker。</li>
 <li>API。我们将keep-alive作为参数，通过invocation request发给invoker，为此增加了一个ActivationMessage的API。</li>
-<li>Invoker。之前unload container是基于ContainerProxy module的time-out。我们修改这个使其基于keep-alive参数。<br><img src="img/openwhisk_architecture.png" alt></li>
+<li>Invoker。之前unload container是基于ContainerProxy module的time-out。我们修改这个使其基于keep-alive参数。<br><img src="openwhisk_architecture.png" alt="architecture"></li>
 </ul>
 
         
