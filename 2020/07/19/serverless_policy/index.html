@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        `Serverless in the Wild: Characterizing and Optimizing the Serverless Workload at a Large Cloud Provider` 阅读笔记 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i> A Future System Architect </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>Xuhui Lu</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>HOME</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>TAGS</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>ARCHIVES</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>ABOUT</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>SEARCH</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Serverless-in-the-Wild-阅读笔记"><span class="toc-text">Serverless in the Wild 阅读笔记</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#介绍"><span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#背景"><span class="toc-text">背景</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#triggers"><span class="toc-text">triggers</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Applications"><span class="toc-text">Applications</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Cold-Start"><span class="toc-text">Cold Start</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Concurrency和Elasticity"><span class="toc-text">Concurrency和Elasticity</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cold-start管理策略"><span class="toc-text">cold start管理策略</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Faas-Workload"><span class="toc-text">Faas Workload</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#FAAS的Cold-Starts管理"><span class="toc-text">FAAS的Cold Starts管理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Design-Challenge"><span class="toc-text">Design Challenge</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#难预测"><span class="toc-text">难预测</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#application的异质性"><span class="toc-text">application的异质性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#不频繁调用的application"><span class="toc-text">不频繁调用的application</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Tracking-overhead"><span class="toc-text">Tracking overhead</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Execution-overhead"><span class="toc-text">Execution overhead</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hybrid-Histogram-Policy"><span class="toc-text">Hybrid Histogram Policy</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Range-limited-histogram"><span class="toc-text">Range-limited histogram</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#标准keep-alive"><span class="toc-text">标准keep-alive</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#时间序列分析"><span class="toc-text">时间序列分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#在Apache-OpenWhisk的实现"><span class="toc-text">在Apache OpenWhisk的实现</span></a></li></ol></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">search</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i> A Future System Architect </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        `Serverless in the Wild: Characterizing and Optimizing the Serverless Workload at a Large Cloud Provider` 阅读笔记
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">Post：<span>2020-07-19 20:24:10</span></span>
+        
+        <span class="attr">Tags：/
+        
+        <a class="tag" href="/tags/#Cloud Native" title="Cloud Native">Cloud Native</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">Visit：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content no-indent">
+        <h1 id="Serverless-in-the-Wild-阅读笔记"><a href="#Serverless-in-the-Wild-阅读笔记" class="headerlink" title="Serverless in the Wild 阅读笔记"></a>Serverless in the Wild 阅读笔记</h1><h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>Faas（Function as a Service）是非常流行的用于Serverless on the cloud的一种方式。这种方式将资源分配相关的任务全都交给了云端，从而降低了资源的消耗，同时给调用的客户造成了一种service是一直可用的假像。因此这篇论文的目标就是介绍了一种资源管理策略，从而减少资源的cold start和计算资源的消耗。</p>
+<p>在这里，我们从三方面来衡量程序能执行多快和资源消耗多少：</p>
+<ul>
+<li>首先是程序执行需要把相关code加载到内存，因此如果code在内存里，程序执行就很快。</li>
+<li>其次，保存所有程序计算相关资源在内存里，是非常昂贵的。理想的情况是，我们希望能让程序看起来，始终保持warm，然而消耗的资源像是它总是cold的。</li>
+<li>最后，不同程序的特征可以差别很大。有些是有固定周期而有些则不。</li>
+</ul>
+<p>这篇论文做了两方面的工作：</p>
+<ul>
+<li>通过统计分析生产环境workload的特征。在文章的第三章提供了经过清理的生产环境统计数据。</li>
+<li>管理cold-start的调用。目前AWS和Azure其实采用了非常naive的策略。就是每次调用完之后将程序保留在内存中固定时间（keep-alive e.g 10 mins）。而本文想要实现的，对不同的workload使用不同的keep-alive。此外，还用了一个pre-warm的变量，预测下次function调用，从而提前加载程序。</li>
+</ul>
+<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><h2 id="triggers"><a href="#triggers" class="headerlink" title="triggers"></a>triggers</h2><p>这边的triggers即触发程序调用的不同事件类型。在这篇论文中，我们将他们分成7类：</p>
+<ul>
+<li>HTTP： http调用</li>
+<li>Event：Azure Event Hub和Azure Event Grid （discret和serial events）</li>
+<li>Queue：message insertion（Azure Service Bus和Kafka）</li>
+<li>Timer：类似于cron job（固定时间间隔）</li>
+<li>Orchestration：Azure Durable Functions</li>
+<li>Storage：changes in Azure Blob Storage和Redis</li>
+<li>others</li>
+</ul>
+<h2 id="Applications"><a href="#Applications" class="headerlink" title="Applications"></a>Applications</h2><p>在Azure Function中，function存在的形式是一系列function组成application。事实上被调度的是application而不是function。</p>
+<h2 id="Cold-Start"><a href="#Cold-Start" class="headerlink" title="Cold Start"></a>Cold Start</h2><p>再补充</p>
+<h2 id="Concurrency和Elasticity"><a href="#Concurrency和Elasticity" class="headerlink" title="Concurrency和Elasticity"></a>Concurrency和Elasticity</h2><p>一个instance事实上可以服务多个request，取决于程序的特性，有的程序有很大的资源需要加载，可能就会造成cold-start很长，但由于这类application的比例小于1%，在本文不考虑这类。</p>
+<h2 id="cold-start管理策略"><a href="#cold-start管理策略" class="headerlink" title="cold start管理策略"></a>cold start管理策略</h2><p>目前的主流开源和公有云采取的fixed keep-alive策略缺点主要两个：</p>
+<ul>
+<li>不同的applications行为表现不同。</li>
+<li>固定的模式容易被调用者察觉，恶意调用可以通过固定时间调用程序，从而让程序一直warm，增大程序消耗。</li>
+</ul>
+<h1 id="Faas-Workload"><a href="#Faas-Workload" class="headerlink" title="Faas Workload"></a>Faas Workload</h1><p>在这一章节，我们就略过了主要的数据分析，直接说结论。</p>
+<p>首先，我们发现大概75%的程序的最大的执行时间是10秒，这大概和cold start是一个时间量级的。通俗的说，就是大部分程序调用还是碰到了cold start的问题。</p>
+<p>其次，大量的function并没有频繁调用。81%的程序平均最多一分钟调用一次。同时，少于20%的程序承担了大概99.6%的调用。因此，将这些不频繁调用的程序一直放在memory是昂贵的。</p>
+<p>最后，40%的application的IAT CV大于1，不需要理解这个参数什么意思，只是说明，就是很大一部分的application调用的间隔变化很大。</p>
+<h1 id="FAAS的Cold-Starts管理"><a href="#FAAS的Cold-Starts管理" class="headerlink" title="FAAS的Cold Starts管理"></a>FAAS的Cold Starts管理</h1><p>本文提出了一种hybrid histogram policy。这个policy主要包括一系列规则，来控制不同应用的两个属性：</p>
+<ul>
+<li>Pre-warming window。代表自从上次调用以后，多久会加载这个应用来应对下一次调用。</li>
+<li>Keep-alive window。这个代表：<ul>
+<li>载入内存以后（pre-warming window &gt;= 0）多久会unload</li>
+<li>执行完以后多久会unload （pre-warming window = 0）</li>
+</ul>
+</li>
+</ul>
+<h2 id="Design-Challenge"><a href="#Design-Challenge" class="headerlink" title="Design Challenge"></a>Design Challenge</h2><h3 id="难预测"><a href="#难预测" class="headerlink" title="难预测"></a>难预测</h3><p>很多application是由timer出发的，因此有固定的pattern。其他类型的application就比较难了。</p>
+<h3 id="application的异质性"><a href="#application的异质性" class="headerlink" title="application的异质性"></a>application的异质性</h3><p>one-size-fits-all策略很难适用所有的application。比较好的策略是动态适配不同的应用。</p>
+<h3 id="不频繁调用的application"><a href="#不频繁调用的application" class="headerlink" title="不频繁调用的application"></a>不频繁调用的application</h3><p>一些应用很少被调用，因此可能需要花比较久的时间去观察它的pattern，对于那些新加入的application也是一样。</p>
+<h3 id="Tracking-overhead"><a href="#Tracking-overhead" class="headerlink" title="Tracking overhead"></a>Tracking overhead</h3><p>我们也要考虑追踪相关参数所需要花费的overhead。比如，用非常小的数据来保存application的状态。</p>
+<h3 id="Execution-overhead"><a href="#Execution-overhead" class="headerlink" title="Execution overhead"></a>Execution overhead</h3><p>function的执行时间是非常短的，因此我们希望execution的overhead也要很小，不然，缩短function的执行时间就没有意义了。</p>
+<h2 id="Hybrid-Histogram-Policy"><a href="#Hybrid-Histogram-Policy" class="headerlink" title="Hybrid Histogram Policy"></a>Hybrid Histogram Policy</h2><p>为了解决挑战一和挑战二，这个策略会适应每个应用的调用频率和模式。每次程序执行完以后，会被立刻从内存unload，然后经过一个pre-warming window以后，加载到内存来应对潜在的调用，之后，保留keep-alive window。如果pre-warming window为0，我们则在keep-alive window以后unload程序。这种情况下会出现三种scenarios。</p>
+<p><img src="../img/serverless_scenarios.png" alt></p>
+<p>其实就是一种pre-warm为0，keep-alive总是时间内，下一个invocation来了。一种是pre-warm以后keep-alive时间内，下一个invocation到了，还有一个就是pre-warm和keep alive都过了，invocation才到。</p>
+<p>这个策略主要有三个主要组件：</p>
+<ul>
+<li>range-limited histogram来捕捉每个应用的‘idle time（IT）’</li>
+<li>当histogram还不是很有代表性的时候，一个标准的keep-alive方法（不同于fixed policy）</li>
+<li>一个时间序列预测的组件（当有太多的IT的时候）。<br><img src="../img/serverless_components.png" alt></li>
+</ul>
+<h3 id="Range-limited-histogram"><a href="#Range-limited-histogram" class="headerlink" title="Range-limited histogram"></a>Range-limited histogram</h3><p>我们通过一个compact的histogram来追踪IT分布。我们可以设置这个窗口，比如4个小时，而IT的单位则是用分钟表示，这也意味着keep-alive和pre-warm的时间单位也是分钟。这可以在metadata size和policy的准确性之间取得一个平衡。然后我们使用这个histogram的头部作为pre-warm，尾部作为keep-alive。去除一些噪音，我们可以取5%-99%之间的数据作为参考。此外，同时，我们还有一个可配置的margin值。给pre-warm时间减少一个margin%，给keep-alive时间增加一个margin%来减少误差。</p>
+<h3 id="标准keep-alive"><a href="#标准keep-alive" class="headerlink" title="标准keep-alive"></a>标准keep-alive</h3><p>当application刚刚起步，观察到的IT不够，或者IT分布突然变成了一个新的pattern（not representative），我们开始采用standard keep-alive。这个方法下，pre-warm=0，而keep-alive等于histogram的范围。这个是为了减少在application的pattern还没被观测到的时候cold starts的次数。</p>
+<p>一个application不是那么representative的特征是用CV标识。一个single bin有很多的count，其他的大部分都为0。CV就很高，相反，所有bin的值都相同，CV值为0。前者是我们所想要的理想状态。因此我们设置一个threshold，如果CV低于这个，则用standard keep-alive，反之，则用histogram。（Welford’s online algorithm追踪）。</p>
+<h3 id="时间序列分析"><a href="#时间序列分析" class="headerlink" title="时间序列分析"></a>时间序列分析</h3><p>当一个histogram的范围不足以表现application的特征时，我们使用时间序列分析来预测（ARIMA modeling），使用pmdarima package的auto_arima。同样，我们也给预测出的时间一个margin，比如15%。</p>
+<h2 id="在Apache-OpenWhisk的实现"><a href="#在Apache-OpenWhisk的实现" class="headerlink" title="在Apache OpenWhisk的实现"></a>在Apache OpenWhisk的实现</h2><p>在这个框架中，所有的invocation会经过Controller，来决定发送到哪个invoker。之前的实现是fixed keep-alive window。在这里，使用新policy的实现思路如下：</p>
+<ul>
+<li>controller。因为所有的invocation都经过controller，我们将histogram和其他一些metadata放在这里。同时更新计算pre-warm和keep-alive时间，并将pre-warm以messga的形式发给invoker。</li>
+<li>API。我们将keep-alive作为参数，通过invocation request发给invoker，为此增加了一个ActivationMessage的API。</li>
+<li>Invoker。之前unload container是基于ContainerProxy module的time-out。我们修改这个使其基于keep-alive参数。<br><img src="../img/openwhisk_architecture.png" alt></li>
+</ul>
+
+        
+        <br>
+        <div id="comment-container">
+        </div>
+        <div id="disqus_thread"></div>
+
+        <div id="lv-container">
+        </div>
+
+    </div>
+</div>
+
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        <li>
+            <a target="_blank" href="https://twitter.com/swimmingfishLu">
+                            <span class="fa-stack fa-lg">
+                                <i class="iconfont icon-twitter"></i>
+                            </span>
+            </a>
+        </li>
+        
+        
+        <li>
+            <a target="_blank" href="https://www.zhihu.com/people/卢旭辉">
+                            <span class="fa-stack fa-lg">
+                                 <i class="iconfont icon-zhihu"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+        
+        <li>
+            <a target="_blank" href="http://weibo.com/SwimmingfishLu">
+                            <span class="fa-stack fa-lg">
+                                  <i class="iconfont icon-weibo"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+        
+        <li>
+            <a target="_blank" href="https://www.facebook.com/xuhui.lu.169">
+                            <span class="fa-stack fa-lg">
+                                <i class="iconfont icon-facebook"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+        
+        <li>
+            <a target="_blank" href="https://github.com/xuhui-lu">
+                            <span class="fa-stack fa-lg">
+                                <i class="iconfont icon-github"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+        
+        <li>
+            <a target="_blank" href="https://www.linkedin.com/in/xuhui-lu-04108a148">
+                            <span class="fa-stack fa-lg">
+                                <i class="iconfont icon-linkedin"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+    </ul>
+    
+    <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p>
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+    <script>
+        /**
+         *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+         *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+        */
+        if( '' || '')
+        var disqus_config = function () {
+            this.page.url = '';  // Replace PAGE_URL with your page's canonical URL variable
+            this.page.identifier = ''; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+
+        (function() { // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+            s.src = 'https://swimmingfish-blog.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+
+
+
+</html>
