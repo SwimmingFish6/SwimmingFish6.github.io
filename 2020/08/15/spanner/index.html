@@ -11,7 +11,7 @@
 
     <title>
         
-        MIT 6.828--Lab1 - undefined
+        Google Spanner Design阅读笔记 - undefined
         
     </title>
 
@@ -89,7 +89,7 @@
     </div>
     
         <div id="toc" class="toc-article">
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Section-1"><span class="toc-text">Section 1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Section-2"><span class="toc-text">Section 2</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#实现"><span class="toc-text">实现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#软件栈"><span class="toc-text">软件栈</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#目录"><span class="toc-text">目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据模型"><span class="toc-text">数据模型</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#TrueTime"><span class="toc-text">TrueTime</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#并发控制"><span class="toc-text">并发控制</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#细节"><span class="toc-text">细节</span></a></li></ol></li></ol>
 </div>
     
 </div>
@@ -119,15 +119,18 @@
 
 <div class="post-container">
     <div class="post-title">
-        MIT 6.828--Lab1
+        Google Spanner Design阅读笔记
     </div>
 
     <div class="post-meta">
-        <span class="attr">Post：<span>2019-04-30 22:32:11</span></span>
+        <span class="attr">Post：<span>2020-08-15 20:02:02</span></span>
         
         <span class="attr">Tags：/
         
-        <a class="tag" href="/tags/#OS" title="OS">OS</a>
+        <a class="tag" href="/tags/#Database" title="Database">Database</a>
+        <span>/</span>
+        
+        <a class="tag" href="/tags/#Cloud Native" title="Cloud Native">Cloud Native</a>
         <span>/</span>
         
         
@@ -137,7 +140,24 @@
 
     </div>
     <div class="post-content no-indent">
-        <h2 id="Section-1"><a href="#Section-1" class="headerlink" title="Section 1"></a>Section 1</h2><h2 id="Section-2"><a href="#Section-2" class="headerlink" title="Section 2"></a>Section 2</h2><p><img src="https://github.com/SwimmingFish6/MDImageResource/raw/master/elf.jpg" alt="Aaron Swartz"></p>
+        <p>Spanner是google设计的一个可扩展的，面向全球部署的分布式数据库。主要是用来解决高可用性的问题。其主要有如下几个特性。</p>
+<ol>
+<li>数据的replica配置粒度可以精细到什么数据中心包含什么数据，数据到用户的距离（读延迟），不同副本的距离（写延迟），副本数量。</li>
+<li>Spanner有两个特性，读和写操作的外部一致性，以及在一个时间戳下的跨越数据库的全球一致性的读操作。</li>
+</ol>
+<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><p>首先我们要澄清几个概念：</p>
+<ul>
+<li>Universe： universe指的是一个Spanner部署。实际操作中，会有一个devel，stag和prod环境下的universe。</li>
+<li>Zone：每个Zone是一个BigTable服务器的部署，是管理部署的基本单元。zone的集合也是数据可以被复制到的位置的集合，新的数据中心加入或者老的数据中心被关闭时，zone会被加入一个新的系统，或者移除。一个数据中心中可能运行多个zone。<br><img src="/img/spanner-fig1.jpg" alt="spanner-figure-1"><br>上图显示了一个Spanner的Universe的部署架构，包括了多个zone。一个zone包括了一个zonemaster，一百到几千个spanserver。Zonemaster负责把数据分配给spanserver，spanserver将数据提供给客户端。location proxy用来定位可以提供数据的spanserver。Universe master控制zone的各种状态信息。placement drive会周期性和spanserver进行交互，来决定数据转移。</li>
+</ul>
+<h2 id="软件栈"><a href="#软件栈" class="headerlink" title="软件栈"></a>软件栈</h2><p><img src="/img/spanner-fig2.jpg" alt="spanner-figure-1"><br>每个spanserver敷在管理100-1000个称作tablet的数据结构，实现了<code>(key:string, timestamp:int64)-&gt;string</code>。timestamp的存在使得其看起来更像一个多版本数据库。tablet状态由一个类似B-树的文件集合和write-ahead日志保存。所有这些会被保存在一个类GFS（Colossus）分布式文件系统保存。</p>
+<p>每个tablet上面会维持一个单个Paxos状态机。每个状态机会在相应的tablet中保存metadata和数据。对于每个leader replica而言，每个spanserver会实现一个锁表来实现并发控制（类似实现可以在cockroachdb中看到）。锁表会将键的值域映射到锁状态上面。主要策略是，对于事务性读操作，需要获取锁，其他类型的操作，不需要获取。</p>
+<p>每个leader replica，每个spanserver也会实施一个事务管理器来支持分布式事务。如果一个事务只牵扯到一个Paxos group，则可以通过锁表和Paxos二者保证事务性。如果有多个Paxos Group，则会有一个group被选为协调者，该group的leader被称为coordinator leader，slaves被称为coordinator slaves。每个事务管理器的状态会被保存到底层的Paxos group。</p>
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><p>Spanner在减值映射的上层实现了一个<code>目录</code>的抽象。也就是包含公共前缀的连续键的集合。属于一个目录的所有数据，都具有相同的副本配置。数据转移也是以目录为最小单位。一个Paxos Group可以包含多个目录，这也意味着一个spanner tablet可以使行空间的多个分区。这样，被频繁访问的分区可以整合到一个tablet上。目录也是指定放置策略的最小单位。值得注意的是，当目录变得太大的时候，Spanner会对其进行分片，因此Movedir(后台程序转移目录)在不同的Paxos Group之间转移的是分片。</p>
+<h2 id="数据模型"><a href="#数据模型" class="headerlink" title="数据模型"></a>数据模型</h2><p>Spanner的数据模型是架构在目录之上的。一个应用会在一个universe中创建一个或者多个数据库。每个数据包含很多表，每个表都具备行列和版本。和关系型数据库不一样的是，Spanner的行必须要有名字，每个表都包含了一个或多个主键列的排序集合：主键形成了一个行的名称，每个表都定义了从主键列到非主键列的映射。当一个行存在时，必须要求给行的其他一些键定义一些值。<br><img src="/img/spanner-fig4.jpg" alt="spanner-figure-1"><br>在这个例子中，指定了Users的表层次高于Albums，父节点和子节点存在一对多的关系，因此，子节点，即Albums表，主键必须以父节点的主键为前缀。而所有以根节点的主键作为前缀的记录的集合被称为一个Directory，Directory是分区，复制和迁移的基本单位。一个directory的所有记录因为具有相同的前缀，所以也会被分配到相邻位置。同时，这种数据排列，也方便进行表间的计算，可以直接通过归并的形式实现。</p>
+<h1 id="TrueTime"><a href="#TrueTime" class="headerlink" title="TrueTime"></a>TrueTime</h1><p>TrueTime api返回的事实上是一个时间区间，通过TTinterval结构表达了时间的不确定性。TrueTime可以保证，对于一个调用tt=TT.now()，有tt.earliest≤tabs(e~now)≤tt.latest。具体细节，可以看论文。</p>
+<h1 id="并发控制"><a href="#并发控制" class="headerlink" title="并发控制"></a>并发控制</h1><p>这个部分论文描述了如何通过TrueTime来保证并发控制的正确性，以及如何实现一些特性。<br><img src="/img/spanner-tab2.jpg" alt="spanner-figure-1"><br>Spanner支持读写事务，只读事务和快照读。会被当成读写事务来执行。非快照独立读操作，会被当成只读事务来执行。二者都是在内部进行retry，客户端不用进行这种retry loop。</p>
+<h2 id="细节"><a href="#细节" class="headerlink" title="细节"></a>细节</h2><p>Pending…..比较复杂</p>
 
         
         <br>
