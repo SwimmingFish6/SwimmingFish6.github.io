@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        TiDB调度核心PD原理 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i> A Future System Architect </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>Xuhui Lu</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>HOME</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>TAGS</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>ARCHIVES</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>ABOUT</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>SEARCH</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#TiDB调度核心PD原理解读"><span class="toc-text">TiDB调度核心PD原理解读</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#PD职能"><span class="toc-text">PD职能</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#关键组件"><span class="toc-text">关键组件</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#调度流程"><span class="toc-text">调度流程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Balance"><span class="toc-text">Balance</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#balance-leader"><span class="toc-text">balance-leader</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#balance-region"><span class="toc-text">balance-region</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#热点调度"><span class="toc-text">热点调度</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#集群拓扑感知"><span class="toc-text">集群拓扑感知</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#缩容及故障恢复"><span class="toc-text">缩容及故障恢复</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Region-Merge"><span class="toc-text">Region Merge</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#具体命令和metric监控"><span class="toc-text">具体命令和metric监控</span></a></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">search</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i> A Future System Architect </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        TiDB调度核心PD原理
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">Post：<span>2020-12-25 13:50:24</span></span>
+        
+        <span class="attr">Tags：/
+        
+        <a class="tag" href="/tags/#TiDB" title="TiDB">TiDB</a>
+        <span>/</span>
+        
+        <a class="tag" href="/tags/#Distributed System" title="Distributed System">Distributed System</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">Visit：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content no-indent">
+        <h1 id="TiDB调度核心PD原理解读"><a href="#TiDB调度核心PD原理解读" class="headerlink" title="TiDB调度核心PD原理解读"></a>TiDB调度核心PD原理解读</h1><h1 id="PD职能"><a href="#PD职能" class="headerlink" title="PD职能"></a>PD职能</h1><p>PD负责TiDB全局元信息的存储，以及TiKV集群负载均衡调度，通过嵌入etcd来支持分布式和容错</p>
+<h2 id="关键组件"><a href="#关键组件" class="headerlink" title="关键组件"></a>关键组件</h2><ul>
+<li><p>Store： 集群的存储节点，tikv-server实例，严格一一对应。</p>
+</li>
+<li><p><strong>Region</strong>： 每个Region负责维护一段连续数据，每份数据在不同的Store保存多个副本。</p>
+</li>
+<li><strong>Peer</strong>：每个数据的副本被称为Peer。同一个Region的多个Peer通过raft协议进行同步，所以Peer也代表raft的一个节点，TiKV使用multi-raft模式管理数据。</li>
+<li><p><strong>Raft Group</strong>：每个Region对应一个独立运行的raft实例，这个实例叫做Raft Group。</p>
+</li>
+<li><p><strong>Leader / Follower/ Learner</strong>：</p>
+<ul>
+<li><strong>Leader</strong>：Leader负责响应客户端的读写请求。</li>
+<li><strong>Follower</strong>：Follower被动地从Leader同步数据。</li>
+<li><strong>Learner</strong>：learner它只参与同步raft log而不参与投票，只短暂存在于添加副本的中间步骤。</li>
+</ul>
+</li>
+<li><p><strong>Region Split</strong>：Region不是预先就划分好的，而是随着数据写入到了一定数据量（配置量）逐渐分裂形成的，这个过程被称为Region Split。</p>
+</li>
+<li><p><strong>Pending/Down</strong>：Peer可能出现的两种特殊状态。</p>
+<ul>
+<li><strong>Pending</strong>：Follower或者Learner的raft log和Leader差别很大，此时Follower无法被选为Leader</li>
+<li><strong>Down</strong>：Down是指Leader长时间没有收到对应Peer的消息（宕机或者网络隔离）</li>
+</ul>
+</li>
+<li><p><strong>Scheduler</strong>：PD中调度的组件，PD中每个调度器是独立运行的，不同的调度器如下：</p>
+<ul>
+<li>balance-leader-scheduler：保持不同节点的 Leader 均衡。</li>
+<li>balance-region-scheduler：保持不同节点的 Peer 均衡。</li>
+<li>hot-region-scheduler：保持不同节点的读写热点 Region 均衡。</li>
+<li>evict-leader-{store-id}：驱逐某个节点的所有 Leader。（常用于滚动升级）</li>
+</ul>
+</li>
+<li><strong>Operator</strong>：Operator是应用于一个Region的用于调度目的的一系列操作集合。</li>
+<li><strong>Operator Step</strong>：<ul>
+<li>TransferLeader：将 Region Leader 迁移至指定 Peer</li>
+<li>AddPeer：在指定 Store 添加 Follower</li>
+<li>RemovePeer：删除一个 Region Peer</li>
+<li>AddLearner：在指定 Store 添加 Region Learner</li>
+<li>PromoteLearner：将指定 Learner 提升为 Follower</li>
+<li>SplitRegion：将指定 Region 一分为二</li>
+</ul>
+</li>
+</ul>
+<h1 id="调度流程"><a href="#调度流程" class="headerlink" title="调度流程"></a>调度流程</h1><ol>
+<li>信息收集<ul>
+<li>StoreHeartbeat：Store的基本信息</li>
+<li>RegionHeartbeat：Region的基本信息</li>
+</ul>
+</li>
+<li>生成调度：通过自身逻辑和需求出来生成待执行的Operator</li>
+<li>执行调度：Operator会进入OperatorController管理的等待队列，将每个Operator Step下发给Region的Leader</li>
+</ol>
+<h1 id="Balance"><a href="#Balance" class="headerlink" title="Balance"></a>Balance</h1><p>负载调度的目的是将Region均匀地分散在集群中的所有store上。策略是根据打分从得分高的Store选择Leader或者Peer迁移到得分低的Store。</p>
+<h2 id="balance-leader"><a href="#balance-leader" class="headerlink" title="balance-leader"></a>balance-leader</h2><p>balance-leader侧重于分散客户端请求的压力。根据Store上所有Leader对应的region size和作为得分。</p>
+<h2 id="balance-region"><a href="#balance-region" class="headerlink" title="balance-region"></a>balance-region</h2><p>balance-region侧重于分散存储压力。当空间富余使用数据量计算得分，当空间不足使用剩余空间计算得分。中间态时则加权。</p>
+<p>此外，两者的权重在不同性能的Store上可配置。</p>
+<h1 id="热点调度"><a href="#热点调度" class="headerlink" title="热点调度"></a>热点调度</h1><p>统计持续一段时间读写流量超过阈值的Region，然后分散这些Region。写热点，会同时打散Leader和Peer。读热点，仅打散Leader。</p>
+<h1 id="集群拓扑感知"><a href="#集群拓扑感知" class="headerlink" title="集群拓扑感知"></a>集群拓扑感知</h1><p>通过调度使得同个Region下的Peer尽可能分散到不同的物理位置。检查这个的组件叫做replicaChecker，依赖于location-labels的配置来进行调度。</p>
+<h1 id="缩容及故障恢复"><a href="#缩容及故障恢复" class="headerlink" title="缩容及故障恢复"></a>缩容及故障恢复</h1><p>缩容是指预备将某个Store下线，标记为offline状态，故障恢复是指Store发生故障且无法恢复。两种情况下PD需要在其他节点上为这些Region补副本。</p>
+<h1 id="Region-Merge"><a href="#Region-Merge" class="headerlink" title="Region Merge"></a>Region Merge</h1><p>避免删除数据后大量小Region消耗系统资源。mergeChecker负责，类似于replicaChecker。</p>
+<h1 id="具体命令和metric监控"><a href="#具体命令和metric监控" class="headerlink" title="具体命令和metric监控"></a>具体命令和metric监控</h1><p>见原文链接：<br><a href="https://zhuanlan.zhihu.com/p/86173040" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/86173040</a></p>
+
+        
+        <br>
+        <div id="comment-container">
+        </div>
+        <div id="disqus_thread"></div>
+
+        <div id="lv-container">
+        </div>
+
+    </div>
+</div>
+
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        <li>
+            <a target="_blank" href="https://twitter.com/swimmingfishLu">
+                            <span class="fa-stack fa-lg">
+                                <i class="iconfont icon-twitter"></i>
+                            </span>
+            </a>
+        </li>
+        
+        
+        <li>
+            <a target="_blank" href="https://www.zhihu.com/people/卢旭辉">
+                            <span class="fa-stack fa-lg">
+                                 <i class="iconfont icon-zhihu"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+        
+        <li>
+            <a target="_blank" href="http://weibo.com/SwimmingfishLu">
+                            <span class="fa-stack fa-lg">
+                                  <i class="iconfont icon-weibo"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+        
+        <li>
+            <a target="_blank" href="https://www.facebook.com/xuhui.lu.169">
+                            <span class="fa-stack fa-lg">
+                                <i class="iconfont icon-facebook"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+        
+        <li>
+            <a target="_blank" href="https://github.com/xuhui-lu">
+                            <span class="fa-stack fa-lg">
+                                <i class="iconfont icon-github"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+        
+        <li>
+            <a target="_blank" href="https://www.linkedin.com/in/xuhui-lu-04108a148">
+                            <span class="fa-stack fa-lg">
+                                <i class="iconfont icon-linkedin"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+    </ul>
+    
+    <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p>
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+    <script>
+        /**
+         *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+         *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+        */
+        if( '' || '')
+        var disqus_config = function () {
+            this.page.url = '';  // Replace PAGE_URL with your page's canonical URL variable
+            this.page.identifier = ''; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+
+        (function() { // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+            s.src = 'https://swimmingfish-blog.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+
+
+
+</html>
