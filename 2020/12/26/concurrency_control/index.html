@@ -11,7 +11,7 @@
 
     <title>
         
-        
+        悲观并发控制和乐观并发控制 - undefined
         
     </title>
 
@@ -53,7 +53,7 @@
     </div>
     <div class="contents" id="nav-content">
         <ul>
-            <li class="active">
+            <li>
                 <a href="/">
                     <i class="iconfont icon-shouye1"></i>
                     <span>HOME</span>
@@ -88,6 +88,10 @@
         </ul>
     </div>
     
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#悲观并发控制"><span class="toc-text">悲观并发控制</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#出发点"><span class="toc-text">出发点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#适用场景"><span class="toc-text">适用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现方式"><span class="toc-text">实现方式</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#乐观并发控制"><span class="toc-text">乐观并发控制</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#出发点-1"><span class="toc-text">出发点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#适用场景-1"><span class="toc-text">适用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现方式-1"><span class="toc-text">实现方式</span></a></li></ol></li></ol>
+</div>
+    
 </div>
 
 
@@ -111,91 +115,51 @@
     <div class="index-middle">
         <!-- Main Content -->
         
-<div class="post-preview-container" style="min-height: 720px">
-    
-    <div class="post-preview">
-        <div class="post-time">2020-04-25</div>
-        <div class="post-info">
-            <a href="/2020/04/25/chapter-3/">
-                <h3>
-                    手撕Docker系列-第三章
-                </h3>
-            </a>
-            <p>
-                
-                <span>/</span>
-                
-                <a class="tag" href="/tags/#Docker" title="Docker">Docker</a>
-                <span>/</span>
-                
-                
-            </p>
-        </div>
+
+
+<div class="post-container">
+    <div class="post-title">
+        悲观并发控制和乐观并发控制
     </div>
-    
-    <div class="post-preview">
-        <div class="post-time">2020-03-24</div>
-        <div class="post-info">
-            <a href="/2020/03/24/chapter-2/">
-                <h3>
-                    手撕Docker系列-第二章
-                </h3>
-            </a>
-            <p>
-                
-                <span>/</span>
-                
-                <a class="tag" href="/tags/#Docker" title="Docker">Docker</a>
-                <span>/</span>
-                
-                
-            </p>
-        </div>
+
+    <div class="post-meta">
+        <span class="attr">Post：<span>2020-12-26 20:59:36</span></span>
+        
+        <span class="attr">Tags：/
+        
+        <a class="tag" href="/tags/#Distributed System" title="Distributed System">Distributed System</a>
+        <span>/</span>
+        
+        <a class="tag" href="/tags/#Database" title="Database">Database</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">Visit：<span id="busuanzi_value_page_pv"></span>
+</span>
+
     </div>
-    
-    <div class="post-preview">
-        <div class="post-time">2019-04-30</div>
-        <div class="post-info">
-            <a href="/2019/04/30/MIT 6.828-Lab1/">
-                <h3>
-                    MIT 6.828--Lab1
-                </h3>
-            </a>
-            <p>
-                
-                <span>/</span>
-                
-                <a class="tag" href="/tags/#OS" title="OS">OS</a>
-                <span>/</span>
-                
-                
-            </p>
+    <div class="post-content no-indent">
+        <h1 id="悲观并发控制"><a href="#悲观并发控制" class="headerlink" title="悲观并发控制"></a>悲观并发控制</h1><p>悲观并发控制（又名“悲观锁”，Pessimistic Concurrency Control，缩写“PCC”）。</p>
+<h2 id="出发点"><a href="#出发点" class="headerlink" title="出发点"></a>出发点</h2><p>假定所有事务所操作的数据都会受到其他事务的冲突，所以每次在获取数据前都会加锁。</p>
+<h2 id="适用场景"><a href="#适用场景" class="headerlink" title="适用场景"></a>适用场景</h2><p>数据写入比较频繁，竞争激烈的场景，应用于很多金融行业场景。在这种场景下可以避免大量无效的尝试。</p>
+<h2 id="实现方式"><a href="#实现方式" class="headerlink" title="实现方式"></a>实现方式</h2><p>行锁，表锁等，读锁，写锁</p>
+<h1 id="乐观并发控制"><a href="#乐观并发控制" class="headerlink" title="乐观并发控制"></a>乐观并发控制</h1><p>乐观并发控制（又名“乐观锁”，Optimistic Concurrency Control，缩写“OCC”）</p>
+<h2 id="出发点-1"><a href="#出发点-1" class="headerlink" title="出发点"></a>出发点</h2><p>假定所有的事务所操作的数据都相互不影响，每次事务提交数据更新前，会检查所获取的数据有没有被别人更新。</p>
+<h2 id="适用场景-1"><a href="#适用场景-1" class="headerlink" title="适用场景"></a>适用场景</h2><p>读操作频繁的场景。可以避免因为加锁带来的大量无效等待。</p>
+<h2 id="实现方式-1"><a href="#实现方式-1" class="headerlink" title="实现方式"></a>实现方式</h2><p>版本号和时间戳，有的db会提供类似write_condition机制。</p>
+
+        
+        <br>
+        <div id="comment-container">
         </div>
-    </div>
-    
-    <div class="post-preview">
-        <div class="post-time">2019-04-30</div>
-        <div class="post-info">
-            <a href="/2019/04/30/hello-world/">
-                <h3>
-                    Hello World
-                </h3>
-            </a>
-            <p>
-                
-            </p>
+        <div id="disqus_thread"></div>
+
+        <div id="lv-container">
         </div>
+
     </div>
-    
 </div>
-<ul class="pager">
-    
-    <li class="previous">
-        <a href="/">&larr; Newer Posts</a>
-    </li>
-    
-    
-</ul>
 
     </div>
 </div>
@@ -283,12 +247,31 @@
     // We expose some of the variables needed by the front end
     window.hexo_search_path = "search.json"
     window.hexo_root = "/"
-    window.isPost = false
+    window.isPost = true
 </script>
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
 <script src="/js/index.js"></script>
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
+
+    <script>
+        /**
+         *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+         *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+        */
+        if( '' || '')
+        var disqus_config = function () {
+            this.page.url = '';  // Replace PAGE_URL with your page's canonical URL variable
+            this.page.identifier = ''; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+
+        (function() { // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+            s.src = 'https://swimmingfish-blog.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
 
 
 
